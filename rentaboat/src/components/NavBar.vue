@@ -1,10 +1,11 @@
 <template>
   <div class="nav-bar">
     <router-link to="/">HOME</router-link>
-    <span v-if="loggedIn">
+    <div v-if="loggedIn">
       | <router-link to="/home">PROFIL</router-link>
+      | <DropdownMenu />
       | <a @click="logout">Odjava</a>
-    </span>
+    </div>
     <span v-else>
       | <router-link to="/login">PRIJAVA</router-link>
       | <router-link to="/register">REGISTRACIJA</router-link>
@@ -13,14 +14,19 @@
 </template>
 
 <script>
+
+import DropdownMenu from './DropdownMenu.vue'
+
 export default {
+  components: {
+    DropdownMenu
+  },
   data() {
     return {
       loggedIn: false
     };
   },
   watch: {
-    // Provjerava status prijave kada se ruta promijeni
     '$route': 'checkLoginStatus'
   },
   mounted() {
@@ -35,7 +41,7 @@ export default {
         });
         const data = await response.json();
         this.loggedIn = data.isAuthenticated;
-        if (this.loggedIn) {
+        if (this.loggedIn && (this.$route.path === '/login' || this.$route.path === '/register')) {
           this.$router.push("/home");
         }
       } catch (error) {
@@ -67,5 +73,19 @@ export default {
 
 .nav-bar a, .nav-bar span {
   margin: 0 5px;  
+}
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  z-index: 1;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
 }
 </style>
