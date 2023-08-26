@@ -34,6 +34,10 @@ export default {
             } catch (error) {
                 console.error('There was an error deleting the boat:', error);
             }
+        },
+        
+        editBoat(id) {
+        this.$router.push(`/edit-boat/${id}`);
         }
     },
     async mounted() {
