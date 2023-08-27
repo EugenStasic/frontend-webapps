@@ -6,6 +6,7 @@ import HomeLoggedIn from '@/views/HomeLoggedIn.vue';
 import MyBoats from '@/views/MyBoats.vue'
 import BoatRegistration from '@/views/BoatRegistration.vue'
 import BoatEdit from '@/views/BoatEdit.vue'
+import SearchResults from '@/views/SearchResults.vue'
 
 const routes = [
     {
@@ -42,6 +43,11 @@ const routes = [
       path: '/edit-boat/:id',
       component: BoatEdit,
       props: true
+    },
+    {
+      path: '/search',
+      name: 'search-results',
+      component: SearchResults
     }
 ];
 

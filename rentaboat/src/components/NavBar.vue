@@ -1,6 +1,7 @@
 <template>
   <div class="nav-bar">
     <router-link to="/">HOME</router-link>
+      | <SearchBar />
     <div v-if="loggedIn">
       | <router-link to="/home">PROFIL</router-link>
       | <DropdownMenu />
@@ -16,11 +17,13 @@
 <script>
 
 import DropdownMenu from './DropdownMenu.vue'
+import SearchBar from './SearchBar.vue';
 
 export default {
   components: {
-    DropdownMenu
-  },
+    DropdownMenu,
+    SearchBar
+},
   data() {
     return {
       loggedIn: false
