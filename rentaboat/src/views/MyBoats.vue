@@ -1,16 +1,24 @@
 <template>
     <div>
       <h1>Moja Plovila</h1>
-      <div v-for="boat in boats" :key="boat._id" class="boat-card">
-        <h3>{{ boat.ime }}</h3>
-        <p>Duljina: {{ boat.duljinaPlovila }}</p>
-        <p>Snaga: {{ boat.snagaMotora }}</p>
-        <p>Lokacija: {{ boat.lokacijaPlovila }}</p>
-        <button @click="editBoat(boat._id)" class="edit-button">Uredi Oglas</button>
-        <button @click="deleteBoat(boat._id)" class="delete-button">Izbriši oglas</button>
-      </div>
+      <div class="boat-cards-container">
+            <div v-for="boat in boats" :key="boat._id" class="boat-card">
+                <div class="image-container">
+                    <img v-if="boat.slikePlovila && boat.slikePlovila.length" :src="getBoatImageUrl(boat.slikePlovila[0])" alt="Slika plovila" class="boat-image"/>
+                </div>
+                <h3>{{ boat.ime }}</h3>
+                <p>Tip: {{ boat.tip }}</p>
+                <p>Duljina: {{ boat.duljinaPlovila }} m</p>
+                <p>Snaga: {{ boat.snagaMotora }} kW</p>
+                <p>Cijena: {{ boat.cijenaPlovila }} €</p>
+                <p>Lokacija: {{ boat.lokacijaPlovila }}</p>
+                <button @click="editBoat(boat._id)" class="edit-button">Uredi Oglas</button>
+                <button @click="deleteBoat(boat._id)" class="delete-button">Izbriši oglas</button>
+            </div>
+      </div>           
     </div>
 </template>
+
   
 <script>
 export default {
@@ -38,7 +46,12 @@ export default {
         
         editBoat(id) {
         this.$router.push(`/edit-boat/${id}`);
-        }
+        },
+
+        getBoatImageUrl(imageName) {
+    const adjustedName = imageName.substring(8);
+    return `http://localhost:3000/boats/slike/${adjustedName}`;
+}
     },
     async mounted() {
         try {
@@ -56,10 +69,32 @@ export default {
 </script>
   
 <style scoped>
+.image-container {
+  width: 100%;
+  height: 200px;
+  background-color: #f3f3f3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.boat-image {
+  max-width: 100%;
+  max-height: 100%;
+}
+.boat-cards-container {
+  margin-left: 280px; 
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
 .boat-card {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
+  flex-basis: calc(25% - 20px); 
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  padding: 20px;
+  min-width: 220px; 
 }
 
 .edit-button {

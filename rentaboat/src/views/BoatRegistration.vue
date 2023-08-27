@@ -1,48 +1,53 @@
 <template>
-    <div>
-      <h1>Prijavi plovilo</h1>
-      <form @submit.prevent="registerBoat">
-        <input type="text" v-model="ime" placeholder="Ime plovila" required />
-        <input type="text" v-model="tip" placeholder="Tip plovila" required />
-        <input type="number" v-model="snagaMotora" placeholder="Snaga motora" required />
-        <input type="number" v-model="duljinaPlovila" placeholder="Duljina plovila" required />
-        <input type="text" v-model="lokacijaPlovila" placeholder="Lokacija plovila" required />
-        <textarea v-model="opis" placeholder="Opis plovila" required></textarea>
-        <button type="submit">Registriraj Plovilo</button>
-      </form>
-      <p v-if="message">{{ message }}</p>
-    </div>
-  </template>
+  <div>
+    <h1>Prijavi plovilo</h1>
+    <form @submit.prevent="registerBoat" enctype="multipart/form-data">
+      <input type="text" v-model="ime" placeholder="Ime plovila" required />
+      <input type="text" v-model="tip" placeholder="Tip plovila" required />
+      <input type="number" v-model="snagaMotora" placeholder="Snaga motora" required />
+      <input type="float" v-model="duljinaPlovila" placeholder="Duljina plovila" required />
+      <input type="number" v-model="cijenaPlovila" placeholder="Cijena plovila" required />
+      <input type="text" v-model="lokacijaPlovila" placeholder="Lokacija plovila" required />
+      <textarea v-model="opis" placeholder="Opis plovila" required></textarea>
+      <input type="file" ref="slikePlovila" multiple accept=".jpg, .jpeg, .png" />
+      <button type="submit">Registriraj Plovilo</button>
+    </form>
+    <p v-if="message">{{ message }}</p>
+  </div>
+</template>
   
   <script>
   export default {
-    data() {
-      return {
-        ime: "",
-        tip: "",
-        snagaMotora: "",
-        duljinaPlovila: "",
-        lokacijaPlovila: "",
-        opis: "",
-        message: ""
-      };
+  data() {
+    return {
+      ime: "",
+      tip: "",
+      snagaMotora: "",
+      duljinaPlovila: "",
+      cijenaPlovila: "",
+      lokacijaPlovila: "",
+      opis: "",
+      message: ""
+    };
     },
     methods: {
       async registerBoat() {
         try {
+        const formData = new FormData();
+        formData.append('ime', this.ime);
+        formData.append('tip', this.tip);
+        formData.append('snagaMotora', this.snagaMotora);
+        formData.append('duljinaPlovila', this.duljinaPlovila);
+        formData.append('cijenaPlovila', this.cijenaPlovila);
+        formData.append('lokacijaPlovila', this.lokacijaPlovila);
+        formData.append('opis', this.opis);
+        const files = this.$refs.slikePlovila.files;
+        for(let i = 0; i < files.length; i++) {
+            formData.append('slikePlovila', files[i]);
+        }
           const response = await fetch("http://localhost:3000/boats/create", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              ime: this.ime,
-              tip: this.tip,
-              snagaMotora: this.snagaMotora,
-              duljinaPlovila: this.duljinaPlovila,
-              lokacijaPlovila: this.lokacijaPlovila,
-              opis: this.opis
-            }),
+            body: formData,
             credentials: "include"
           });
           const data = await response.json();

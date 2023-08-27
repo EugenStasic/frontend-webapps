@@ -3,7 +3,6 @@
     <router-link to="/">HOME</router-link>
       | <SearchBar />
     <div v-if="loggedIn">
-      | <router-link to="/home">PROFIL</router-link>
       | <DropdownMenu />
       | <a @click="logout">Odjava</a>
     </div>
