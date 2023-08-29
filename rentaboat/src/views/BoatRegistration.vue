@@ -3,7 +3,14 @@
     <h1>Prijavi plovilo</h1>
     <form @submit.prevent="registerBoat" enctype="multipart/form-data">
       <input type="text" v-model="ime" placeholder="Ime plovila" required />
-      <input type="text" v-model="tip" placeholder="Tip plovila" required />
+        <select v-model="tip" required>
+          <option value="" disabled>Izaberite tip plovila</option>
+          <option value="Gliser">Gliser</option>
+          <option value="Gumenjak">Gumenjak</option>
+          <option value="Jedrilica">Jedrilica</option>
+          <option value="Katamaran">Katamaran</option>
+          <option value="Luksuzna Jahta">Luksuzna Jahta</option>
+        </select>
       <input type="number" v-model="snagaMotora" placeholder="Snaga motora" required />
       <input type="float" v-model="duljinaPlovila" placeholder="Duljina plovila" required />
       <input type="number" v-model="cijenaPlovila" placeholder="Cijena plovila" required />

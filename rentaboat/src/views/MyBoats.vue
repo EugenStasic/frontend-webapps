@@ -2,19 +2,21 @@
     <div>
       <h1>Moja Plovila</h1>
       <div class="boat-cards-container">
-            <div v-for="boat in boats" :key="boat._id" class="boat-card">
-                <div class="image-container">
-                    <img v-if="boat.slikePlovila && boat.slikePlovila.length" :src="getBoatImageUrl(boat.slikePlovila[0])" alt="Slika plovila" class="boat-image"/>
-                </div>
-                <h3>{{ boat.ime }}</h3>
-                <p>Tip: {{ boat.tip }}</p>
-                <p>Duljina: {{ boat.duljinaPlovila }} m</p>
-                <p>Snaga: {{ boat.snagaMotora }} kW</p>
-                <p>Cijena: {{ boat.cijenaPlovila }} €</p>
-                <p>Lokacija: {{ boat.lokacijaPlovila }}</p>
-                <button @click="editBoat(boat._id)" class="edit-button">Uredi Oglas</button>
-                <button @click="deleteBoat(boat._id)" class="delete-button">Izbriši oglas</button>
+        <div v-for="boat in boats" :key="boat._id" class="boat-card">
+          <router-link :to="`/boat-ad/${boat._id}`" class="boat-card-link">
+            <div class="image-container">
+                <img v-if="boat.slikePlovila && boat.slikePlovila.length" :src="getBoatImageUrl(boat.slikePlovila[0])" alt="Slika plovila" class="boat-image"/>
             </div>
+            <h3>{{ boat.ime }}</h3>
+            <p>Tip: {{ boat.tip }}</p>
+            <p>Duljina: {{ boat.duljinaPlovila }} m</p>
+            <p>Snaga: {{ boat.snagaMotora }} kW</p>
+            <p>Cijena: {{ boat.cijenaPlovila }} €</p>
+            <p>Lokacija: {{ boat.lokacijaPlovila }}</p>
+          </router-link>
+          <button @click="editBoat(boat._id)" class="edit-button">Uredi Oglas</button>
+          <button @click="deleteBoat(boat._id)" class="delete-button">Izbriši oglas</button>
+        </div>
       </div>           
     </div>
 </template>

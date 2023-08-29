@@ -22,15 +22,17 @@
       </div>
       <div class="boat-cards-container">
         <div v-for="boat in boats" :key="boat._id" class="boat-card">
-          <div class="image-container">
-            <img v-if="boat.slikePlovila && boat.slikePlovila.length" :src="getBoatImageUrl(boat.slikePlovila[0])" alt="Slika plovila" class="boat-image"/>
-          </div>
-          <h3>{{ boat.ime }}</h3>
-          <p>Tip: {{ boat.tip }}</p>
-          <p>Duljina: {{ boat.duljinaPlovila }} m</p>
-          <p>Snaga: {{ boat.snagaMotora }} kW</p>
-          <p>Cijena: {{ boat.cijenaPlovila }} €</p>
-          <p>Lokacija: {{ boat.lokacijaPlovila }}</p>
+          <router-link :to="`/boat-ad/${boat._id}`" class="boat-card-link">
+            <div class="image-container">
+              <img v-if="boat.slikePlovila && boat.slikePlovila.length" :src="getBoatImageUrl(boat.slikePlovila[0])" alt="Slika plovila" class="boat-image"/>
+            </div>
+            <h3>{{ boat.ime }}</h3>
+            <p>Tip: {{ boat.tip }}</p>
+            <p>Duljina: {{ boat.duljinaPlovila }} m</p>
+            <p>Snaga: {{ boat.snagaMotora }} kW</p>
+            <p>Cijena: {{ boat.cijenaPlovila }} €</p>
+            <p>Lokacija: {{ boat.lokacijaPlovila }}</p>
+          </router-link>
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ import MyBoats from '@/views/MyBoats.vue'
 import BoatRegistration from '@/views/BoatRegistration.vue'
 import BoatEdit from '@/views/BoatEdit.vue'
 import SearchResults from '@/views/SearchResults.vue'
+import BoatAd from '@/views/BoatAd.vue';
 
 const routes = [
     {
@@ -48,6 +49,12 @@ const routes = [
       path: '/search',
       name: 'search-results',
       component: SearchResults
+    },
+    {
+      path: '/boat-ad/:id',
+      name: 'BoatAd',
+      component: BoatAd,
+      props: true 
     }
 ];
 
