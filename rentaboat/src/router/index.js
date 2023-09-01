@@ -8,6 +8,7 @@ import BoatRegistration from '@/views/BoatRegistration.vue'
 import BoatEdit from '@/views/BoatEdit.vue'
 import SearchResults from '@/views/SearchResults.vue'
 import BoatAd from '@/views/BoatAd.vue';
+import MyBookings from '@/views/MyBookings.vue';
 
 const routes = [
     {
@@ -55,6 +56,11 @@ const routes = [
       name: 'BoatAd',
       component: BoatAd,
       props: true 
+    },
+    {
+      path: "/my-bookings",
+      name: "my-bookings",
+      component: MyBookings
     }
 ];
 

@@ -4,6 +4,7 @@
     <div class="dropdown-content">
       <router-link to="/register-boat">Prijavi plovilo</router-link> |
       <router-link to="/my-boats">Moja Plovila</router-link>
+      <router-link to="/my-bookings">Moje Rezervacije</router-link>
     </div>
   </div>
 </template>
