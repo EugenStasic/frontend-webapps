@@ -45,9 +45,21 @@
         :disabled="isDateUnavailable(startDate)"
       />
       <p>Cijena: {{ boatPrice }},00€</p>
+      <label for="renterContact">Kontakt:</label>
+      <input 
+        id="renterContact" 
+        type="text" 
+        v-model="renterContact"
+        placeholder="Unesite vaš kontakt"
+        required
+      />
       <textarea v-model="note" placeholder="Napomena"></textarea>
       <button @click="submitBooking">Potvrdi Booking</button>
       <p class="error-message">{{ errorMessage }}</p>
+      <div v-if="bookingSuccess" class="success-message">
+        <h2>Uspješno ste rezervirali plovilo!</h2>
+        <p>Detalje možete pronaći na <router-link to="/my-bookings">My Bookings stranici</router-link>.</p>
+      </div>
     </div>
   </div>
 </template>
@@ -61,14 +73,18 @@ export default {
       userId: null,
       startDate: null,
       endDate: null,
+      renterContact: "",
+      userBookings: [],
       note: "",
       unavailableDates: [],
       errorMessage: "",
+      bookingSuccess: false,
       today: new Date().toISOString().split('T')[0]
     };
   },
   computed: {
     boatPrice() {
+
       if (!this.startDate || !this.endDate || !this.boat.cijenaPlovila) {
         return 0;
       }
@@ -81,9 +97,14 @@ export default {
   },
   async mounted() {
     try {
+
       const id = this.$route.params.id;
       const response = await fetch(`http://localhost:3000/boats/${id}`);
       this.boat = await response.json();
+      
+      const userBookingsResponse = await fetch(`http://localhost:3000/bookings/renter`, { credentials: 'include' });
+      this.userBookings = await userBookingsResponse.json();
+      this.calculateUnavailableForUser();
 
       const currentUserResponse = await fetch('http://localhost:3000/users/me', {credentials: "include"});
       const currentUser = await currentUserResponse.json();
@@ -91,10 +112,6 @@ export default {
 
       const unavailableDatesResponse = await fetch(`http://localhost:3000/boats/${this.boat._id}/unavailable-dates`);
       this.unavailableDates = await unavailableDatesResponse.json();
-      
-      if (!this.boat || !this.boat.slikePlovila) {
-        throw new Error("Boat data is not available");
-      }
     } catch (error) {
       console.error("Error mounted:", error.message);
     }
@@ -115,30 +132,59 @@ export default {
       }
     },
     async submitBooking() {
+
+      const isOverlapping = this.unavailableDates.some(range => {
+        const newStart = new Date(this.startDate).getTime();
+        const newEnd = new Date(this.endDate).getTime();
+        const existingStart = new Date(range.startDate).getTime();
+        const existingEnd = new Date(range.endDate).getTime();
+        return (existingStart < newEnd && existingEnd > newStart);
+      });
+
+      if (isOverlapping) {
+        this.errorMessage = "You already have a booking during this time.";
+        return;
+      }
+
       const sendData = {
         boatId: this.boat._id,
         startDate: this.startDate,
         endDate: this.endDate,
         totalCost: this.boatPrice,
-        note: this.note
+        note: this.note,
+        renterContact: this.renterContact
       };
+
       const response = await fetch('http://localhost:3000/bookings/create', {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(sendData),
         credentials: 'include'
       });
+
       if (response.ok) {
         await response.json();
+        this.bookingSuccess = true;
       } else if (response.status === 401) {
-        this.errorMessage = "Da bi ste rezervirali plovilo morate imati korisnički račun";
+        this.errorMessage = "Da bi ste rezervirali plovilo, morate biti ulogirani.";
+      } else {
+        this.errorMessage = "Rezervacija plovila nije uspjela. Molimo vas pokušajte ponovno.";
       }
     },
     isDateUnavailable(date) {
       return this.unavailableDates.some(range =>
         new Date(range.startDate) <= new Date(date) && new Date(range.endDate) >= new Date(date)
       );
-    }
+    },
+    calculateUnavailableForUser() {
+    this.userBookings.forEach(booking => {
+      const newRange = {
+        startDate: booking.startDate,
+        endDate: booking.endDate
+      };
+      this.unavailableDates.push(newRange);
+    });
+  },
   }
 }
 </script>
@@ -175,4 +221,11 @@ export default {
   background-color: #f9f9f9;
   border: 1px solid #ccc;
 }
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 20px;
+    margin-top: 20px;
+  }
 </style>

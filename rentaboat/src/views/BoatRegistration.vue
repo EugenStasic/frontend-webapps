@@ -15,6 +15,7 @@
       <input type="float" v-model="duljinaPlovila" placeholder="Duljina plovila" required />
       <input type="number" v-model="cijenaPlovila" placeholder="Cijena plovila" required />
       <input type="text" v-model="lokacijaPlovila" placeholder="Lokacija plovila" required />
+      <input type="text" v-model="ownerContact" placeholder="Kontakt vlasnika" required />
       <textarea v-model="opis" placeholder="Opis plovila" required></textarea>
       <input type="file" ref="slikePlovila" multiple accept=".jpg, .jpeg, .png" />
       <button type="submit">Registriraj Plovilo</button>
@@ -33,6 +34,7 @@
       duljinaPlovila: "",
       cijenaPlovila: "",
       lokacijaPlovila: "",
+      ownerContact: "",
       opis: "",
       message: ""
     };
@@ -47,6 +49,7 @@
         formData.append('duljinaPlovila', this.duljinaPlovila);
         formData.append('cijenaPlovila', this.cijenaPlovila);
         formData.append('lokacijaPlovila', this.lokacijaPlovila);
+        formData.append('ownerContact', this.ownerContact);
         formData.append('opis', this.opis);
         const files = this.$refs.slikePlovila.files;
         for(let i = 0; i < files.length; i++) {

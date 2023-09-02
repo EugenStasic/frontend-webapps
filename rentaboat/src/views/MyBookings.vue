@@ -20,7 +20,7 @@
     </div>
 
     <div class="content-container">
-      <h1>My Bookings</h1>
+      <h1>Moje Rezervacije</h1>
 
       <div v-if="filteredMyBookings.length === 0 && filteredMyBoatsBookings.length === 0">
         Nemate rezervacija. Pretražite ponudu i izaberite plovilo.
@@ -34,10 +34,10 @@
           </div>
           <div class="booking-info">
             <h2>{{ booking.boat.ime }}</h2>
-            <p><strong>Start Date:</strong> {{ formatDate(booking.startDate) }}</p>
-            <p><strong>End Date:</strong> {{ formatDate(booking.endDate) }}</p>
-            <p><strong>Total Price:</strong> {{ booking.totalCost }},00€</p>
-            <p><strong>Email:</strong> {{ booking.renter.email }}</p>
+            <p><strong>Početak:</strong> {{ formatDate(booking.startDate) }}</p>
+            <p><strong>Kraj:</strong> {{ formatDate(booking.endDate) }}</p>
+            <p><strong>Ukupna cijena:</strong> {{ booking.totalCost }},00€</p>
+            <p><strong>Kontakt:</strong> {{ booking.renterContact }}</p>
             <button v-if="booking.status === 'upcoming'" @click="cancelBooking(booking._id)">OTKAŽI REZERVACIJU</button>
           </div>
         </div>
@@ -54,7 +54,7 @@
             <p><strong>Start Date:</strong> {{ formatDate(booking.startDate) }}</p>
             <p><strong>End Date:</strong> {{ formatDate(booking.endDate) }}</p>
             <p><strong>Total Price:</strong> {{ booking.totalCost }} €</p>
-            <p><strong>Email:</strong> {{ booking.owner.email }}</p>
+            <p><strong>Contact:</strong> {{ booking.boat.ownerContact }}</p>
             <button v-if="booking.status === 'upcoming'" @click="cancelBooking(booking._id)">OTKAŽI REZERVACIJU</button>
             <button v-if="booking.status === 'past' && !booking.isRated" @click="rateBoat(booking._id)">OCIJENI PLOVILO</button>
             <p v-if="booking.status === 'past' && booking.isRated">Ocijenjeno!</p>
