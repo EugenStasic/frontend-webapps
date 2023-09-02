@@ -38,7 +38,7 @@
             <p><strong>End Date:</strong> {{ formatDate(booking.endDate) }}</p>
             <p><strong>Total Price:</strong> {{ booking.totalCost }},00€</p>
             <p><strong>Email:</strong> {{ booking.renter.email }}</p>
-            <button @click="cancelBooking(booking._id)">OTKAŽI REZERVACIJU</button>
+            <button v-if="booking.status === 'upcoming'" @click="cancelBooking(booking._id)">OTKAŽI REZERVACIJU</button>
           </div>
         </div>
       </div>
@@ -55,7 +55,9 @@
             <p><strong>End Date:</strong> {{ formatDate(booking.endDate) }}</p>
             <p><strong>Total Price:</strong> {{ booking.totalCost }} €</p>
             <p><strong>Email:</strong> {{ booking.owner.email }}</p>
-            <button @click="cancelBooking(booking._id)">OTKAŽI REZERVACIJU</button>
+            <button v-if="booking.status === 'upcoming'" @click="cancelBooking(booking._id)">OTKAŽI REZERVACIJU</button>
+            <button v-if="booking.status === 'past' && !booking.isRated" @click="rateBoat(booking._id)">OCIJENI PLOVILO</button>
+            <p v-if="booking.status === 'past' && booking.isRated">Ocijenjeno!</p>
           </div>
         </div>
       </div>
@@ -70,7 +72,6 @@ export default {
     return {
       filterStatus: 'upcoming',
       showSection: 'mojeRezervacije',
-      subSection: 'upcoming',
       myBookings: [],
       myBoatsBookings: [],
       userId: null,
@@ -97,8 +98,7 @@ export default {
   },
   methods: {
     getBoatImageUrl(imageName) {
-      const adjustedName = imageName.substring(8);
-      return `http://localhost:3000/boats/slike/${adjustedName}`;
+      return `http://localhost:3000/boats/slike/${imageName.substring(8)}`;
     },
     formatDate(value) {
       const date = new Date(value);
@@ -119,6 +119,41 @@ export default {
         }
       } catch (error) {
         alert(`Error: ${error.message}`);
+      }
+    },
+    async rateBoat(bookingId) {
+      const booking = this.myBookings.find(b => b._id === bookingId);
+      if (!booking || !booking.boat) {
+        alert("Booking or Boat not found");
+        return;
+      }
+      if (booking.isRated) {
+        alert("This booking has already been rated.");
+        return;
+      }
+      const rating = prompt("Ocijeni plovilo 1 - 5");
+      if (rating >= 1 && rating <= 5) {
+        try {
+          const response = await fetch(`http://localhost:3000/boats/${booking.boat._id}/rate`, {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ rating, bookingId })
+          });
+          if (response.ok) {
+            alert("Plovilo ocijenjeno!");
+            booking.isRated = true;
+          } else {
+            const data = await response.json();
+            alert(`Failed to rate boat: ${data.error}`);
+          }
+        } catch (error) {
+          alert(`Error: ${error.message}`);
+        }
+      } else {
+        alert("Krivi unos");
       }
     },
   },
