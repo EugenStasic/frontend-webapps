@@ -26,11 +26,13 @@
             <div class="image-container">
               <img v-if="boat.slikePlovila && boat.slikePlovila.length" :src="getBoatImageUrl(boat.slikePlovila[0])" alt="Slika plovila" class="boat-image"/>
             </div>
+            <p v-if="boat.averageRating === 0">Plovilo nije ocijenjeno</p>
+            <p v-else>Ocijene korisnika: {{ boat.averageRating.toFixed(1) }}</p>
             <h3>{{ boat.ime }}</h3>
             <p>Tip: {{ boat.tip }}</p>
             <p>Duljina: {{ boat.duljinaPlovila }} m</p>
-            <p>Snaga: {{ boat.snagaMotora }} kW</p>
-            <p>Cijena: {{ boat.cijenaPlovila }} €</p>
+            <p>Snaga: {{ boat.snagaMotora }} HP</p>
+            <p>Cijena: {{ boat.cijenaPlovila }},00€</p>
             <p>Lokacija: {{ boat.lokacijaPlovila }}</p>
           </router-link>
         </div>
@@ -73,7 +75,15 @@ export default {
 
         const response = await fetch(url);
         if (response.status === 200) {
-          this.boats = await response.json();
+          const boatsData = await response.json();
+          this.boats = boatsData.map(boat => {
+            if (boat.ocjene && boat.ocjene.length > 0) {
+              const sum = boat.ocjene.reduce((a, b) => a + b, 0);
+              const avg = sum / boat.ocjene.length;
+              return { ...boat, averageRating: avg };
+            }
+            return { ...boat, averageRating: 0 };
+          });
         } else {
           console.error("Error retrieving boats:", await response.text());
         }
@@ -116,53 +126,63 @@ export default {
 </script>
 
 <style scoped>
-.image-container {
-  width: 100%;
-  height: 200px;
-  background-color: #f3f3f3;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-.boat-image {
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.layout-container {
-  display: flex;
-  padding-top: 60px;
-}
-
-#filter-bar {
-  position: fixed;
-  left: 0;
-  top: 60px;
-  width: 200px;
-  height: calc(100% - 60px);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 20px;
-  border-right: 1px solid #ccc;
-  overflow-y: auto;
-}
-
-.boat-cards-container {
-  margin-left: 280px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.boat-card {
-  flex-basis: calc(25% - 20px);
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-  padding: 20px;
-  min-width: 220px;
-}
+  .image-container {
+    width: 100%;
+    height: 200px;
+    background-color: #f3f3f3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  
+  .boat-image {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  
+  .layout-container {
+    display: flex;
+    padding-top: 60px;
+  }
+  
+  #filter-bar {
+    position: fixed;
+    left: 0;
+    top: 60px;
+    width: 200px;
+    height: calc(100% - 60px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 20px;
+    border-right: 1px solid #ccc;
+    overflow-y: auto;
+  }
+  
+  .boat-cards-container {
+    margin-left: 280px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .boat-card {
+    flex-basis: calc(33.3333% - 20px);
+    padding: 15px;
+    border: 1px solid #ccc;
+    text-align: center;
+  }
+  
+  .boat-card-link {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  @media screen and (max-width: 1024px) {
+    .boat-card {
+      flex-basis: calc(50% - 20px);
+    }
+  }
 </style>

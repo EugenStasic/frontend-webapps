@@ -1,8 +1,16 @@
 <template>
   <div class="container">
-    <div class="boat-ad-container">
+    <div v-if="boat && Object.keys(boat).length > 0" class="boat-ad-container">
       <div class="image-container">
-        <img v-if="boat.slikePlovila && boat.slikePlovila.length" :src="getBoatImageUrl(boat.slikePlovila[0])" alt="Slika plovila" class="boat-image"/>
+        <button @click="prevPhoto" :disabled="currentPhotoIndex === 0">←</button>
+        <img 
+          v-if="boat.slikePlovila && boat.slikePlovila.length"
+          :src="getBoatImageUrl(boat.slikePlovila[currentPhotoIndex])" 
+          alt="Slika plovila" 
+          class="boat-image"
+        />
+        <div v-else>Nema slika za prikaz</div>
+        <button @click="nextPhoto" :disabled="currentPhotoIndex === boat.slikePlovila.length - 1">→</button>
       </div>
       <h1>{{ boat.ime }}</h1>
       <div class="boat-specs">
@@ -17,13 +25,25 @@
         <p>{{ boat.opis }}</p>
       </div>
     </div>
-    
-    <div v-if="userId !== boat.owner" class="booking-form">
+    <div v-else>...</div>
+    <div v-if="userId !== boat.owner && boat && Object.keys(boat).length > 0" class="booking-form">
       <h2>Iznajmi Plovilo</h2>
       <label for="startDate">Početak:</label>
-      <input id="startDate" type="date" v-model="startDate" :min="today" :disabled="isDateUnavailable(startDate)" />
+      <input 
+        id="startDate" 
+        type="date" 
+        v-model="startDate" 
+        :min="today" 
+        :disabled="isDateUnavailable(startDate)"
+      />
       <label for="endDate">Kraj:</label>
-      <input id="endDate" type="date" v-model="endDate" :min="startDate || today" :disabled="isDateUnavailable(startDate)" />
+      <input 
+        id="endDate" 
+        type="date" 
+        v-model="endDate" 
+        :min="startDate || today" 
+        :disabled="isDateUnavailable(startDate)"
+      />
       <p>Cijena: {{ boatPrice }},00€</p>
       <textarea v-model="note" placeholder="Napomena"></textarea>
       <button @click="submitBooking">Potvrdi Booking</button>
@@ -37,6 +57,7 @@ export default {
   data() {
     return {
       boat: {},
+      currentPhotoIndex: 0,
       userId: null,
       startDate: null,
       endDate: null,
@@ -59,24 +80,42 @@ export default {
     }
   },
   async mounted() {
-    const id = this.$route.params.id;
-    const response = await fetch(`http://localhost:3000/boats/${id}`);
-    this.boat = await response.json();
+    try {
+      const id = this.$route.params.id;
+      const response = await fetch(`http://localhost:3000/boats/${id}`);
+      this.boat = await response.json();
 
-    const currentUserResponse = await fetch('http://localhost:3000/users/me', {credentials: "include"});
-    const currentUser = await currentUserResponse.json();
-    this.userId = currentUser._id;
+      const currentUserResponse = await fetch('http://localhost:3000/users/me', {credentials: "include"});
+      const currentUser = await currentUserResponse.json();
+      this.userId = currentUser._id;
 
-    const unavailableDatesResponse = await fetch(`http://localhost:3000/boats/${this.boat._id}/unavailable-dates`);
-    this.unavailableDates = await unavailableDatesResponse.json();
+      const unavailableDatesResponse = await fetch(`http://localhost:3000/boats/${this.boat._id}/unavailable-dates`);
+      this.unavailableDates = await unavailableDatesResponse.json();
+      
+      if (!this.boat || !this.boat.slikePlovila) {
+        throw new Error("Boat data is not available");
+      }
+    } catch (error) {
+      console.error("Error mounted:", error.message);
+    }
   },
   methods: {
     getBoatImageUrl(imageName) {
       const adjustedName = imageName.substring(8);
       return `http://localhost:3000/boats/slike/${adjustedName}`;
     },
+    nextPhoto() {
+      if (this.currentPhotoIndex < this.boat.slikePlovila.length - 1) {
+        this.currentPhotoIndex++;
+      }
+    },
+    prevPhoto() {
+      if (this.currentPhotoIndex > 0) {
+        this.currentPhotoIndex--;
+      }
+    },
     async submitBooking() {
-      const SendData = {
+      const sendData = {
         boatId: this.boat._id,
         startDate: this.startDate,
         endDate: this.endDate,
@@ -86,7 +125,7 @@ export default {
       const response = await fetch('http://localhost:3000/bookings/create', {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(SendData),
+        body: JSON.stringify(sendData),
         credentials: 'include'
       });
       if (response.ok) {

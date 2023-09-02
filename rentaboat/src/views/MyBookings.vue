@@ -23,7 +23,7 @@
       <h1>My Bookings</h1>
 
       <div v-if="filteredMyBookings.length === 0 && filteredMyBoatsBookings.length === 0">
-        You have no bookings yet.
+        Nemate rezervacija. Pretražite ponudu i izaberite plovilo.
       </div>
 
       <div v-if="showSection === 'rezervacijeMojihPlovila' && filteredMyBoatsBookings.length > 0">
