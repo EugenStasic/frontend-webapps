@@ -6,7 +6,14 @@
       <input id="ime" v-model="boat.ime" placeholder="Ime plovila" />
 
       <label for="tip">Tip plovila:</label>
-      <input id="tip" v-model="boat.tip" placeholder="Tip plovila" />
+        <select id="tip" v-model="boat.tip" required>
+          <option value="" disabled>Izaberite tip plovila</option>
+          <option value="Gliser">Gliser</option>
+          <option value="Gumenjak">Gumenjak</option>
+          <option value="Jedrilica">Jedrilica</option>
+          <option value="Katamaran">Katamaran</option>
+          <option value="Luksuzna Jahta">Luksuzna Jahta</option>
+        </select>
 
       <label for="snagaMotora">Snaga motora:</label>
       <input id="snagaMotora" v-model="boat.snagaMotora" placeholder="Snaga motora" />

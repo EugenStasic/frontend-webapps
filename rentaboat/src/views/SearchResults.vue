@@ -51,9 +51,9 @@ export default {
       lokacijaPlovila: '',
       uniqueLocations: [],
       snagaMotoraMax: 600,
-      duljinaPlovilaMax: 20,
+      duljinaPlovilaMax: 50,
       maxMotorPower: 600,
-      maxBoatLength: 20
+      maxBoatLength: 50
     }
   },
   async mounted() {

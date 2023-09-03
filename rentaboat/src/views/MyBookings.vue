@@ -105,6 +105,7 @@ export default {
       return date.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
     },
     async cancelBooking(id) {
+      if( window.confirm("Jeste li sigurni da želite otkazati rezervaciju?")){
       try {
         const response = await fetch(`http://localhost:3000/bookings/${id}`, {
           method: 'DELETE',
@@ -113,7 +114,6 @@ export default {
         if (response.ok) {
           this.myBookings = this.myBookings.filter(booking => booking._id !== id);
           this.myBoatsBookings = this.myBoatsBookings.filter(booking => booking._id !== id);
-          localStorage.setItem('shouldRefreshUnavailableDates', 'true');
         } else {
           const data = await response.json();
           alert(`Error: ${data.error}`);
@@ -121,6 +121,7 @@ export default {
       } catch (error) {
         alert(`Error: ${error.message}`);
       }
+    }
     },
     async rateBoat(bookingId) {
       const booking = this.myBookings.find(b => b._id === bookingId);

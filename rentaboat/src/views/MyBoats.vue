@@ -10,8 +10,8 @@
             <h3>{{ boat.ime }}</h3>
             <p>Tip: {{ boat.tip }}</p>
             <p>Duljina: {{ boat.duljinaPlovila }} m</p>
-            <p>Snaga: {{ boat.snagaMotora }} kW</p>
-            <p>Cijena: {{ boat.cijenaPlovila }} €</p>
+            <p>Snaga: {{ boat.snagaMotora }} HP</p>
+            <p>Cijena: {{ boat.cijenaPlovila }},00€</p>
             <p>Lokacija: {{ boat.lokacijaPlovila }}</p>
           </router-link>
           <button @click="editBoat(boat._id)" class="edit-button">Uredi Oglas</button>
@@ -31,19 +31,20 @@ export default {
     },
     methods: {
       async deleteBoat(id) {
-            try {
-                const response = await fetch(`http://localhost:3000/boats/${id}`, {
-                    method: "DELETE",
-                    credentials: "include"
-                });
-                if (!response.ok) {
-                    throw new Error('Error deleting the boat');
-                }
-                
-                this.boats = this.boats.filter(boat => boat._id !== id);
-            } catch (error) {
-                console.error('There was an error deleting the boat:', error);
-            }
+      if (window.confirm("Jeste li sigurni da želite izbrisati plovilo?")) {
+        try {
+          const response = await fetch(`http://localhost:3000/boats/${id}`, {
+            method: "DELETE",
+            credentials: "include"
+          });
+          if (!response.ok) {
+            throw new Error('Error deleting the boat');
+          }
+          this.boats = this.boats.filter(boat => boat._id !== id);
+        } catch (error) {
+          console.error('There was an error deleting the boat:', error);
+        }
+      }
         },
         
         editBoat(id) {

@@ -2,7 +2,6 @@
   <div class="container">
     <div v-if="boat && Object.keys(boat).length > 0" class="boat-ad-container">
       <div class="image-container">
-        <button @click="prevPhoto" :disabled="currentPhotoIndex === 0">←</button>
         <img 
           v-if="boat.slikePlovila && boat.slikePlovila.length"
           :src="getBoatImageUrl(boat.slikePlovila[currentPhotoIndex])" 
@@ -10,7 +9,10 @@
           class="boat-image"
         />
         <div v-else>Nema slika za prikaz</div>
-        <button @click="nextPhoto" :disabled="currentPhotoIndex === boat.slikePlovila.length - 1">→</button>
+      </div>
+      <div class="arrow-container">
+        <button @click="prevPhoto" :disabled="currentPhotoIndex === 0" class="arrow-button">←</button>
+        <button @click="nextPhoto" :disabled="currentPhotoIndex === boat.slikePlovila.length - 1" class="arrow-button">→</button>
       </div>
       <h1>{{ boat.ime }}</h1>
       <div class="boat-specs">
@@ -205,6 +207,7 @@ export default {
   background-color: #f3f3f3;
   display: flex;
   justify-content: center;
+  flex-direction: column; 
   align-items: center;
   overflow: hidden;
 }
@@ -229,4 +232,19 @@ export default {
     padding: 20px;
     margin-top: 20px;
   }
+  .arrow-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.arrow-button {
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  margin: 0 5px;
+  color: #333;  /* You can set your own color */
+}
 </style>
