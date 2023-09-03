@@ -84,7 +84,6 @@ export default {
   },
   computed: {
     boatPrice() {
-
       if (!this.startDate || !this.endDate || !this.boat.cijenaPlovila) {
         return 0;
       }
@@ -97,21 +96,23 @@ export default {
   },
   async mounted() {
     try {
+      this.unavailableDates = [];
 
       const id = this.$route.params.id;
       const response = await fetch(`http://localhost:3000/boats/${id}`);
       this.boat = await response.json();
-      
+
       const userBookingsResponse = await fetch(`http://localhost:3000/bookings/renter`, { credentials: 'include' });
       this.userBookings = await userBookingsResponse.json();
       this.calculateUnavailableForUser();
 
-      const currentUserResponse = await fetch('http://localhost:3000/users/me', {credentials: "include"});
+      const currentUserResponse = await fetch('http://localhost:3000/users/me', { credentials: "include" });
       const currentUser = await currentUserResponse.json();
       this.userId = currentUser._id;
 
       const unavailableDatesResponse = await fetch(`http://localhost:3000/boats/${this.boat._id}/unavailable-dates`);
       this.unavailableDates = await unavailableDatesResponse.json();
+
     } catch (error) {
       console.error("Error mounted:", error.message);
     }
@@ -132,7 +133,6 @@ export default {
       }
     },
     async submitBooking() {
-
       const isOverlapping = this.unavailableDates.some(range => {
         const newStart = new Date(this.startDate).getTime();
         const newEnd = new Date(this.endDate).getTime();
@@ -142,7 +142,7 @@ export default {
       });
 
       if (isOverlapping) {
-        this.errorMessage = "You already have a booking during this time.";
+        this.errorMessage = "Već imate rezervaciju za ovaj period.";
         return;
       }
 
@@ -157,7 +157,7 @@ export default {
 
       const response = await fetch('http://localhost:3000/bookings/create', {
         method: "POST",
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(sendData),
         credentials: 'include'
       });
@@ -177,17 +177,18 @@ export default {
       );
     },
     calculateUnavailableForUser() {
-    this.userBookings.forEach(booking => {
-      const newRange = {
-        startDate: booking.startDate,
-        endDate: booking.endDate
-      };
-      this.unavailableDates.push(newRange);
-    });
-  },
+      this.userBookings.forEach(booking => {
+        const newRange = {
+          startDate: booking.startDate,
+          endDate: booking.endDate
+        };
+        this.unavailableDates.push(newRange);
+      });
+    },
   }
 }
 </script>
+
 
 <style scoped>
 .container {

@@ -11,7 +11,7 @@
     </p>
     <p>
       Ako želite zaraditi dodatno i podijeliti ljepote Jadrana s drugima, 
-      <router-link to="/register-boat">registrujte svoj brod</router-link> i postanite dio naše mreže iznajmljivača.
+      <router-link to="/register-boat">registirajte svoj brod</router-link> i postanite dio naše mreže iznajmljivača.
     </p>
   </div>
 </template>

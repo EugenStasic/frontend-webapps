@@ -113,6 +113,7 @@ export default {
         if (response.ok) {
           this.myBookings = this.myBookings.filter(booking => booking._id !== id);
           this.myBoatsBookings = this.myBoatsBookings.filter(booking => booking._id !== id);
+          localStorage.setItem('shouldRefreshUnavailableDates', 'true');
         } else {
           const data = await response.json();
           alert(`Error: ${data.error}`);
