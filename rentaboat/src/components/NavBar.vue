@@ -1,7 +1,7 @@
 <template>
   <div class="nav-bar">
-    <router-link to="/">HOME</router-link>
-      | <SearchBar />
+    <router-link :to="loggedIn ? '/home' : '/'">HOME</router-link>
+    | <SearchBar />
     <div v-if="loggedIn">
       | <DropdownMenu />
       | <a @click="logout">Odjava</a>
@@ -14,35 +14,37 @@
 </template>
 
 <script>
-
-import DropdownMenu from './DropdownMenu.vue'
+import DropdownMenu from './DropdownMenu.vue';
 import SearchBar from './SearchBar.vue';
+import { checkAuth, logout } from '@/services/authService';
 
 export default {
   components: {
     DropdownMenu,
     SearchBar
-},
+  },
   data() {
     return {
-      loggedIn: false
+      loggedIn: false,
+      firstLoad: true
     };
   },
   watch: {
-    '$route': 'checkLoginStatus'
+    '$route': async function(to) {
+      const unprotectedRoutes = ['welcome', 'search-results', 'BoatAd', 'register', 'login'];
+      const isUnprotected = unprotectedRoutes.includes(to.name);
+      if (to.name === 'home' || (!this.firstLoad && !isUnprotected)) {
+        await this.checkLoginStatus();
+      }
+    }
   },
   mounted() {
-    this.checkLoginStatus();
+    this.firstLoad = false;
   },
   methods: {
     async checkLoginStatus() {
       try {
-        const response = await fetch("http://localhost:3000/users/checkAuth", {
-          method: "GET",
-          credentials: "include"
-        });
-        const data = await response.json();
-        this.loggedIn = data.isAuthenticated;
+        this.loggedIn = await checkAuth();
         if (this.loggedIn && (this.$route.path === '/login' || this.$route.path === '/register')) {
           this.$router.push("/home");
         }
@@ -52,10 +54,8 @@ export default {
     },
     async logout() {
       try {
-        await fetch("http://localhost:3000/users/logout", {
-          method: "GET",
-          credentials: "include"
-        });
+        await logout();
+        this.loggedIn = false;
         this.$router.push("/");
       } catch (error) {
         console.error("Error logging out!", error);
@@ -72,20 +72,8 @@ export default {
   padding: 1rem;
   background: #eee;
 }
-
 .nav-bar a, .nav-bar span {
   margin: 0 5px;  
-}
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  z-index: 1;
 }
 .dropdown:hover .dropdown-content {
   display: block;

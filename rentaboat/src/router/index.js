@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { checkAuth } from '@/services/authService';
 import WelcomePage from '@/views/WelcomePage.vue';
 import UserLogin from '@/views/UserLogin.vue';
 import UserRegistration from '@/views/UserRegistration.vue';
@@ -67,6 +68,25 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(),
     routes,
+});
+
+router.beforeEach(async (to, _, next) => {
+  const unprotectedRoutes = ['welcome', 'search-results', 'BoatAd', 'register', 'login'];
+  const isUnprotected = unprotectedRoutes.includes(to.name);
+
+  if (isUnprotected) {
+    next();
+    return;
+  }
+
+  const isAuthenticated = await checkAuth();
+
+  if (!isAuthenticated) {
+    next({ name: 'login' });
+    return;
+  }
+
+  next();
 });
 
 export default router;
