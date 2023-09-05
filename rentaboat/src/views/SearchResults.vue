@@ -2,44 +2,55 @@
   <div>
     <h1>Rezultati Pretrage</h1>
     <div class="layout-container">
-      <div id="filter-bar">
-        <input v-model="ime" placeholder="Ime plovila...">
-        <select v-model="tip">
-          <option value="">Svi tipovi</option>
-          <option value="Gliser">Gliser</option>
-          <option value="Gumenjak">Gumenjak</option>
-          <option value="Jedrilica">Jedrilica</option>
-        </select>
-        <select v-model="lokacijaPlovila">
-          <option value="">Sve Lokacije</option>
-          <option v-for="location in uniqueLocations" :key="location">{{ location }}</option>
-        </select>
-        Snaga motora: <input type="range" v-model.number="snagaMotoraMax" :max="maxMotorPower" step="1">
-        <p>{{ snagaMotoraMax }} HP</p>
-        Duljina plovila: <input type="range" v-model.number="duljinaPlovilaMax" :max="maxBoatLength" step="0.1">
-        <p>{{ duljinaPlovilaMax }} m</p>
-        <button @click="getAllBoats">Filtriraj</button>
+      <div id="filter-bar" class="card">
+        <div class="card-body">
+          <h5 class="card-title">Filtriraj Plovila</h5>
+          <input class="form-control" v-model="ime" placeholder="Ime plovila...">
+          <select class="form-control" v-model="tip">
+            <option value="">Svi tipovi</option>
+          </select>
+          <select class="form-control" v-model="lokacijaPlovila">
+            <option value="">Sve Lokacije</option>
+            <option v-for="location in uniqueLocations" :key="location">{{ location }}</option>
+          </select>
+          <label>Snaga motora:</label>
+          <input type="range" class="form-control-range" v-model.number="snagaMotoraMax" :max="maxMotorPower" step="1">
+          <p>{{ snagaMotoraMax }} HP</p>
+          <label>Duljina plovila:</label>
+          <input type="range" class="form-control-range" v-model.number="duljinaPlovilaMax" :max="maxBoatLength" step="0.1">
+          <p>{{ duljinaPlovilaMax }} m</p>
+          <button class="btn btn-primary" @click="getAllBoats">Filtriraj</button>
+        </div>
       </div>
-      <div class="boat-cards-container">
-        <div v-for="boat in boats" :key="boat._id" class="boat-card">
-          <router-link :to="`/boat-ad/${boat._id}`" class="boat-card-link">
-            <div class="image-container">
-              <img v-if="boat.slikePlovila && boat.slikePlovila.length" :src="getBoatImageUrl(boat.slikePlovila[0])" alt="Slika plovila" class="boat-image"/>
-            </div>
-            <p v-if="boat.averageRating === 0">Plovilo nije ocijenjeno</p>
-            <p v-else>Ocijene korisnika: {{ boat.averageRating.toFixed(1) }}</p>
-            <h3>{{ boat.ime }}</h3>
-            <p>Tip: {{ boat.tip }}</p>
-            <p>Duljina: {{ boat.duljinaPlovila }} m</p>
-            <p>Snaga: {{ boat.snagaMotora }} HP</p>
-            <p>Cijena: {{ boat.cijenaPlovila }},00€</p>
-            <p>Lokacija: {{ boat.lokacijaPlovila }}</p>
-          </router-link>
+
+      <div class="boat-cards-container row">
+        <div v-for="boat in boats" :key="boat._id" class="col-md-2 mb-3">
+          <div class="card">
+            <router-link :to="`/boat-ad/${boat._id}`" class="boat-card-link">
+              <div class="image-container">
+                <img v-if="boat.slikePlovila && boat.slikePlovila.length" :src="getBoatImageUrl(boat.slikePlovila[0])" alt="Slika plovila" class="card-img-top"/>
+              </div>
+              <div class="star-container">
+                <span v-for="n in 5" :key="n">
+                  <i :class="['fas fa-star', getStarClass(n, boat.averageRating)]"></i>
+                </span>
+              </div>
+              <div class="card-body">
+                <h5 class="card-title boat-name">{{ boat.ime }}</h5>
+                <p class="card-text"><strong>Tip:</strong> {{ boat.tip }}</p>
+                <p class="card-text"><strong>Duljina:</strong> {{ boat.duljinaPlovila }} m</p>
+                <p class="card-text"><strong>Snaga:</strong> {{ boat.snagaMotora }} HP</p>
+                <p class="card-text"><strong>Cijena:</strong> {{ boat.cijenaPlovila }},00€</p>
+                <p class="card-text"><strong>Lokacija:</strong> {{ boat.lokacijaPlovila }}</p>
+              </div>
+            </router-link>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
 
 <script>
 export default {
@@ -120,32 +131,26 @@ export default {
       } catch (error) {
         console.error("Error fetching max boat length:", error);
       }
+    },
+    getStarClass(n, averageRating) {
+      if (n <= Math.floor(averageRating)) {
+        return 'text-warning';
+      } else if (n === Math.ceil(averageRating) && averageRating % 1 !== 0) {
+        return 'text-warning';
+      } else {
+        return 'text-secondary'; 
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-  .image-container {
-    width: 100%;
-    height: 200px;
-    background-color: #f3f3f3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-  }
-  
-  .boat-image {
-    max-width: 100%;
-    max-height: 100%;
-  }
-  
   .layout-container {
     display: flex;
     padding-top: 60px;
   }
-  
+
   #filter-bar {
     position: fixed;
     left: 0;
@@ -160,29 +165,43 @@ export default {
     border-right: 1px solid #ccc;
     overflow-y: auto;
   }
-  
+
   .boat-cards-container {
     margin-left: 280px;
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
   }
-  
-  .boat-card {
-    flex-basis: calc(33.3333% - 20px);
-    padding: 15px;
-    border: 1px solid #ccc;
-    text-align: center;
+
+  .image-container {
+    width: 100%;
+    height: 200px;
+    background-color: #f3f3f3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
   }
-  
+
   .boat-card-link {
     text-decoration: none;
-    color: inherit;
+    color: black;
   }
-  
-  @media screen and (max-width: 1024px) {
-    .boat-card {
-      flex-basis: calc(50% - 20px);
-    }
+
+  .boat-name,
+  .card-text > strong {
+    font-weight: bold;
+  }
+
+  .star-full {
+    color: gold;
+  }
+
+  .star-half {
+    color: gold;
+  }
+
+  .star-empty {
+    color: grey;
   }
 </style>

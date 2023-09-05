@@ -1,24 +1,36 @@
 <template>
-    <div>
-      <h1>Moja Plovila</h1>
-      <div class="boat-cards-container">
-        <div v-for="boat in boats" :key="boat._id" class="boat-card">
-          <router-link :to="`/boat-ad/${boat._id}`" class="boat-card-link">
-            <div class="image-container">
-                <img v-if="boat.slikePlovila && boat.slikePlovila.length" :src="getBoatImageUrl(boat.slikePlovila[0])" alt="Slika plovila" class="boat-image"/>
+  <div class="container"></div>
+  <div>
+    <h1>Moja Plovila</h1>
+    <div class="layout-container">
+      
+        
+
+      <div class="boat-cards-container row">
+        <div v-for="boat in boats" :key="boat._id" class="col-md-2 mb-3">
+          <div class="card">
+            <router-link :to="`/boat-ad/${boat._id}`" class="boat-card-link">
+              <div class="image-container">
+                <img v-if="boat.slikePlovila && boat.slikePlovila.length" :src="getBoatImageUrl(boat.slikePlovila[0])" alt="Slika plovila" class="card-img-top"/>
+              </div>
+              <div class="card-body">
+                <h5 class="card-title boat-name">{{ boat.ime }}</h5>
+                <p class="card-text"><strong>Tip:</strong> {{ boat.tip }}</p>
+                <p class="card-text"><strong>Duljina:</strong> {{ boat.duljinaPlovila }} m</p>
+                <p class="card-text"><strong>Snaga:</strong> {{ boat.snagaMotora }} HP</p>
+                <p class="card-text"><strong>Cijena:</strong> {{ boat.cijenaPlovila }},00€</p>
+                <p class="card-text"><strong>Lokacija:</strong> {{ boat.lokacijaPlovila }}</p>
+              </div>
+            </router-link>
+            <div class="card-footer">
+              <button @click="editBoat(boat._id)" class="btn btn-warning mr-2">Uredi Oglas</button>
+              <button @click="deleteBoat(boat._id)" class="btn btn-danger">Izbriši oglas</button>
             </div>
-            <h3>{{ boat.ime }}</h3>
-            <p>Tip: {{ boat.tip }}</p>
-            <p>Duljina: {{ boat.duljinaPlovila }} m</p>
-            <p>Snaga: {{ boat.snagaMotora }} HP</p>
-            <p>Cijena: {{ boat.cijenaPlovila }},00€</p>
-            <p>Lokacija: {{ boat.lokacijaPlovila }}</p>
-          </router-link>
-          <button @click="editBoat(boat._id)" class="edit-button">Uredi Oglas</button>
-          <button @click="deleteBoat(boat._id)" class="delete-button">Izbriši oglas</button>
+          </div>
         </div>
-      </div>           
+      </div>
     </div>
+  </div>
 </template>
 
   
@@ -71,48 +83,52 @@ export default {
 }
 </script>
   
+
 <style scoped>
-.image-container {
-  width: 100%;
-  height: 200px;
-  background-color: #f3f3f3;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
+
+.layout-container {
+    display: flex;
+    align-items: center; 
+    padding-top: 60px;
+    justify-content: center;
+  }
+
+  .boat-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    
+  }
+  .card {
+  margin: 30px;
+  min-width: 260px;
+  max-width: 350px;
 }
 
-.boat-image {
-  max-width: 100%;
-  max-height: 100%;
-}
-.boat-cards-container {
-  margin-left: 280px; 
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-.boat-card {
-  flex-basis: calc(25% - 20px); 
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-  padding: 20px;
-  min-width: 220px; 
-}
+  .image-container {
+    width: 100%;
+    height: 200px;
+    background-color: #f3f3f3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
 
-.edit-button {
-    background-color: orange;
-    border: none;
-    padding: 5px 15px;
-    margin-right: 5px;
-    cursor: pointer;
-}
+  .boat-card-link {
+    text-decoration: none;
+    color: black;
+  }
 
-.delete-button {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 5px 15px;
-    cursor: pointer;
-}
+  .boat-name,
+  .card-text > strong {
+    font-weight: bold;
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 </style>

@@ -16,6 +16,13 @@ export default {
 </script>
 
 <style>
+
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to bottom, #33ccff 0%, #ffffff 100%);
+  min-height: 100vh;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

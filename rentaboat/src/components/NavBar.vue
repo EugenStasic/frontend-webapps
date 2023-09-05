@@ -1,17 +1,37 @@
 <template>
-  <div class="nav-bar">
-    <router-link :to="loggedIn ? '/home' : '/'">HOME</router-link>
-    | <SearchBar />
-    <div v-if="loggedIn">
-      | <DropdownMenu />
-      | <a @click="logout">Odjava</a>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="nav-section">
+      <div class="left-nav-items">
+        <router-link :to="loggedIn ? '/home' : '/'" class="navbar-brand">Rent a Boat Adriatic</router-link>
+        <SearchBar />
+      </div>
+      <div v-if="loggedIn" class="right-nav-items">
+        <DropdownMenu />
+        <a @click="logout" class="nav-link">Odjava</a>
+      </div>
+      <div v-else class="right-nav-items">
+        <router-link to="/login" class="nav-link">Prijava</router-link>
+        <router-link to="/register" class="nav-link">Registracija</router-link>
+      </div>
     </div>
-    <span v-else>
-      | <router-link to="/login">PRIJAVA</router-link>
-      | <router-link to="/register">REGISTRACIJA</router-link>
-    </span>
-  </div>
+  </nav>
 </template>
+
+
+
+<style scoped>
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.navbar-nav {
+  display: flex;
+  gap: 1rem;
+}
+/* your existing styles */
+</style>
 
 <script>
 import DropdownMenu from './DropdownMenu.vue';
@@ -66,16 +86,21 @@ export default {
 </script>
 
 <style scoped>
-.nav-bar {
+.navbar {
   display: flex;
-  gap: 1rem;
-  padding: 1rem;
-  background: #eee;
+  justify-content: space-between;
 }
-.nav-bar a, .nav-bar span {
-  margin: 0 5px;  
+.nav-section {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
-.dropdown:hover .dropdown-content {
-  display: block;
+.left-nav-items, .right-nav-items {
+  display: flex;
+  align-items: center;
+}
+.nav-link {
+  margin: 0 15px;  /* This adds space to the left and right of each nav link */
+  font-size: 1.2em;  /* This increases the font size */
 }
 </style>

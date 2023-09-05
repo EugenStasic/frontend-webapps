@@ -1,12 +1,44 @@
 <template>
   <div>
-    <h1>Register</h1>
-    <form @submit.prevent="register">
-      <input type="text" v-model="ime" placeholder="First Name" required />
-      <input type="text" v-model="prezime" placeholder="Last Name" required />
-      <input type="email" v-model="email" placeholder="Email" required />
-      <input type="password" v-model="password" placeholder="Password" required />
-      <button type="submit">Register</button>
+    <h1 class="header-register">Registracija</h1>
+    <form @submit.prevent="register" class="register-form">
+      <div class="form-group">
+        <label for="ime" class="custom-label">Ime:</label>
+        <input type="text" 
+               id="ime" 
+               class="form-control custom-input" 
+               v-model="ime" 
+               placeholder="Ime"
+               required>
+      </div>
+      <div class="form-group">
+        <label for="prezime" class="custom-label">Prezime:</label>
+        <input type="text" 
+               id="prezime" 
+               class="form-control custom-input" 
+               v-model="prezime" 
+               placeholder="Prezime"
+               required>
+      </div>
+      <div class="form-group">
+        <label for="email" class="custom-label">Email:</label>
+        <input type="email" 
+               id="email" 
+               class="form-control custom-input" 
+               v-model="email" 
+               placeholder="Email"
+               required>
+      </div>
+      <div class="form-group">
+        <label for="password" class="custom-label">Password:</label>
+        <input type="password" 
+               id="password" 
+               class="form-control custom-input" 
+               v-model="password" 
+               placeholder="Vaša Zaporka"
+               required>
+      </div>
+      <button type="submit" class="btn btn-primary custom-button">Registrirajte se</button>
     </form>
     <p v-if="message">{{ message }}</p>
   </div>
@@ -51,3 +83,29 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.header-register {
+  font-family: 'Arial', sans-serif;
+  font-size: 2em;
+}
+
+.custom-label {
+  font-family: 'Arial', sans-serif;
+  font-weight: bold;
+}
+
+.custom-input {
+  width: 20%;
+  margin: auto;
+  text-align: center; 
+}
+
+.register-form {
+  text-align: center;
+}
+
+.custom-button {
+  margin-top: 10px;
+}
+</style>

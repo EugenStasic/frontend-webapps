@@ -1,12 +1,15 @@
 <template>
-  <div>
-    <h2>Uredi podatke o plovilu:</h2>
-    <form @submit.prevent="updateBoat">
-      <label for="ime">Ime plovila:</label>
-      <input id="ime" v-model="boat.ime" placeholder="Ime plovila" />
+  <div class="container">
+    <h1 class="text-center">Uredi podatke o plovilu:</h1>
+    <form @submit.prevent="updateBoat" class="border p-4 rounded">
+      <div class="form-group">
+        <label for="ime">Ime plovila:</label>
+        <input type="text" class="form-control" id="ime" v-model="boat.ime" placeholder="Ime plovila" required>
+      </div>
 
-      <label for="tip">Tip plovila:</label>
-        <select id="tip" v-model="boat.tip" required>
+      <div class="form-group">
+        <label for="tip">Tip plovila:</label>
+        <select class="form-control" id="tip" v-model="boat.tip" required>
           <option value="" disabled>Izaberite tip plovila</option>
           <option value="Gliser">Gliser</option>
           <option value="Gumenjak">Gumenjak</option>
@@ -14,41 +17,52 @@
           <option value="Katamaran">Katamaran</option>
           <option value="Luksuzna Jahta">Luksuzna Jahta</option>
         </select>
+      </div>
 
-      <label for="snagaMotora">Snaga motora:</label>
-      <input id="snagaMotora" v-model="boat.snagaMotora" placeholder="Snaga motora" />
+      <div class="form-group">
+        <label for="snagaMotora">Snaga motora:</label>
+        <input type="text" class="form-control" id="snagaMotora" v-model="boat.snagaMotora" placeholder="Snaga motora" required>
+      </div>
 
-      <label for="duljinaPlovila">Duljina plovila:</label>
-      <input id="duljinaPlovila" v-model="boat.duljinaPlovila" placeholder="Duljina plovila" />
+      <div class="form-group">
+        <label for="duljinaPlovila">Duljina plovila:</label>
+        <input type="text" class="form-control" id="duljinaPlovila" v-model="boat.duljinaPlovila" placeholder="Duljina plovila" required>
+      </div>
 
-      <label for="lokacijaPlovila">Lokacija plovila:</label>
-      <input id="lokacijaPlovila" v-model="boat.lokacijaPlovila" placeholder="Lokacija plovila" />
+      <div class="form-group">
+        <label for="lokacijaPlovila">Lokacija plovila:</label>
+        <input type="text" class="form-control" id="lokacijaPlovila" v-model="boat.lokacijaPlovila" placeholder="Lokacija plovila" required>
+      </div>
 
-      <label for="opis">Opis plovila:</label>
-      <textarea id="opis" v-model="boat.opis" placeholder="Opis plovila" rows="4" cols="50"></textarea>
+      <div class="form-group">
+        <label for="opis">Opis plovila:</label>
+        <textarea class="form-control" id="opis" v-model="boat.opis" placeholder="Opis plovila" rows="4"></textarea>
+      </div>
 
-      <label for="cijenaPlovila">Cijena plovila:</label>
-      <input id="cijenaPlovila" v-model="boat.cijenaPlovila" placeholder="Cijena plovila" />
+      <div class="form-group">
+        <label for="cijenaPlovila">Cijena plovila:</label>
+        <input type="text" class="form-control" id="cijenaPlovila" v-model="boat.cijenaPlovila" placeholder="Cijena plovila" required>
+      </div>
 
-      <button type="submit">Pohrani promjene</button>
+      <button type="submit" class="btn btn-primary">Pohrani promjene</button>
     </form>
 
-    <div>
+    <div class="mt-4">
       <h3>Dodaj slike</h3>
-      <input type="file" ref="fileInput" multiple @change="addImages"/>
-      <button @click="uploadImages">Pohrani</button>
+      <input type="file" class="form-control-file" ref="fileInput" multiple @change="addImages"/>
+      <button class="btn btn-secondary mt-2" @click="uploadImages">Pohrani</button>
     </div>
 
-    <div>
+    <div class="mt-4">
       <h3>Učitane slike:</h3>
       <div v-for="(image, index) in boat.slikePlovila" :key="index">
         <img :src="getBoatImageUrl(image)" alt="" width="100" height="100"/>
-        <button @click="removeImage(index)">Izbriši</button>
+        <button class="btn btn-danger" @click="removeImage(index)">Izbriši</button>
       </div>
     </div>
+
   </div>
 </template>
-
 <script>
 export default {
   data() {
@@ -122,52 +136,21 @@ export default {
 </script>
 
 <style scoped>
-  h2, h3 {
+  h1 {
     margin-bottom: 1em;
+  }
+
+  .container {
+    max-width: 600px;
+    margin: auto;
   }
 
   form {
-    margin: 1em 0;
-    max-width: 400px;
-    padding: 1em;
     border: 1px solid #ccc;
     border-radius: 5px;
-  }
-
-  label {
-    font-weight: bold;
-    margin-right: 0.5em;
-    display: block;
-    margin-bottom: 0.5em;
-  }
-
-  input, textarea {
-    display: block;
-    width: 100%;
-    padding: 0.5em;
-    margin-bottom: 1em;
-    border: 1px solid #ccc;
-    border-radius: 3px;
   }
 
   button {
-    background-color: #007BFF;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  button:hover {
-    background-color: #0056b3;
-  }
-
-  div {
-    margin-bottom: 1em;
-  }
-
-  img {
-    margin-right: 0.5em;
+    margin-top: 1em;
   }
 </style>

@@ -1,9 +1,14 @@
 <template>
-  <div>
-    <h1>Prijavi plovilo</h1>
-    <form @submit.prevent="registerBoat" enctype="multipart/form-data">
-      <input type="text" v-model="ime" placeholder="Ime plovila" required />
-        <select v-model="tip" required>
+  <div class="container mt-3">
+    <h1 class="header-login">Prijavi plovilo</h1>
+    <form @submit.prevent="registerBoat" enctype="multipart/form-data" class="border-form">
+      <div class="form-group mb-3">
+        <label for="ime" class="custom-label">Ime plovila:</label>
+        <input id="ime" type="text" class="form-control" v-model="ime" placeholder="Ime plovila" required />
+      </div>
+      <div class="form-group mb-3">
+        <label for="tip" class="custom-label">Tip plovila:</label>
+        <select id="tip" class="form-control" v-model="tip" required>
           <option value="" disabled>Izaberite tip plovila</option>
           <option value="Gliser">Gliser</option>
           <option value="Gumenjak">Gumenjak</option>
@@ -11,18 +16,41 @@
           <option value="Katamaran">Katamaran</option>
           <option value="Luksuzna Jahta">Luksuzna Jahta</option>
         </select>
-      <input type="number" v-model="snagaMotora" placeholder="Snaga motora" required />
-      <input type="float" v-model="duljinaPlovila" placeholder="Duljina plovila" required />
-      <input type="number" v-model="cijenaPlovila" placeholder="Cijena plovila" required />
-      <input type="text" v-model="lokacijaPlovila" placeholder="Lokacija plovila" required />
-      <input type="text" v-model="ownerContact" placeholder="Kontakt vlasnika" required />
-      <textarea v-model="opis" placeholder="Opis plovila" required></textarea>
-      <input type="file" ref="slikePlovila" multiple accept=".jpg, .jpeg, .png" />
-      <button type="submit">Registriraj Plovilo</button>
+      </div>
+      <div class="form-group mb-3">
+        <label for="snagaMotora" class="custom-label">Snaga motora:</label>
+        <input id="snagaMotora" type="number" class="form-control" v-model="snagaMotora" placeholder="Snaga motora" required />
+      </div>
+      <div class="form-group mb-3">
+        <label for="duljinaPlovila" class="custom-label">Duljina plovila:</label>
+        <input id="duljinaPlovila" type="number" class="form-control" v-model="duljinaPlovila" placeholder="Duljina plovila" required />
+      </div>
+      <div class="form-group mb-3">
+        <label for="cijenaPlovila" class="custom-label">Cijena plovila:</label>
+        <input id="cijenaPlovila" type="number" class="form-control" v-model="cijenaPlovila" placeholder="Cijena plovila" required />
+      </div>
+      <div class="form-group mb-3">
+        <label for="lokacijaPlovila" class="custom-label">Lokacija plovila:</label>
+        <input id="lokacijaPlovila" type="text" class="form-control" v-model="lokacijaPlovila" placeholder="Lokacija plovila" required />
+      </div>
+      <div class="form-group mb-3">
+        <label for="ownerContact" class="custom-label">Kontakt vlasnika:</label>
+        <input id="ownerContact" type="text" class="form-control" v-model="ownerContact" placeholder="Email/Broj mobitela" required />
+      </div>
+      <div class="form-group mb-3">
+        <label for="opis" class="custom-label">Opis plovila:</label>
+        <textarea id="opis" class="form-control" v-model="opis" placeholder="Opis plovila" required></textarea>
+      </div>
+      <div class="form-group mb-3">
+        <label for="slikePlovila" class="custom-label">Učitajte slike plovila:</label>
+        <input id="slikePlovila" type="file" class="form-control-file" ref="slikePlovila" multiple accept=".jpg, .jpeg, .png" />
+      </div>
+      <button type="submit" class="btn btn-primary">Registriraj Plovilo</button>
     </form>
-    <p v-if="message">{{ message }}</p>
+    <p v-if="message" class="mt-3">{{ message }}</p>
   </div>
 </template>
+
   
   <script>
   export default {
@@ -72,3 +100,25 @@
     }
   };
   </script>
+
+<style scoped>
+.header-login {
+  font-family: 'Arial', sans-serif;
+  font-size: 2em;
+}
+.form-control{
+  width: 50%;
+  margin: auto;
+  text-align: center;
+}
+.custom-label {
+  font-family: 'Arial', sans-serif;
+  font-weight: bold;
+}
+.border-form {
+    border-radius: 5px;
+    width: 60%;
+    margin: auto;
+  }
+
+</style>
