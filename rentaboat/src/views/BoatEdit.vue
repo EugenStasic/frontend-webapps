@@ -63,7 +63,10 @@
 
   </div>
 </template>
+
 <script>
+import config from '../config.js';
+
 export default {
   data() {
     return {
@@ -73,7 +76,7 @@ export default {
   methods: {
     async updateBoat(shouldRedirect = true) {
       try {
-        const response = await fetch(`http://localhost:3000/boats/${this.$route.params.id}`, {
+        const response = await fetch(config.baseUrl + `/boats/${this.$route.params.id}`, {
           method: "PATCH",
           credentials: "include",
           headers: {
@@ -95,7 +98,7 @@ export default {
     },
     getBoatImageUrl(imageName) {
       const adjustedName = imageName.substring(8);
-      return `http://localhost:3000/boats/slike/${adjustedName}`;
+      return config.baseUrl + `/boats/slike/${adjustedName}`;
     },
     async addImages() {
       const files = this.$refs.fileInput.files;
@@ -105,7 +108,7 @@ export default {
         formData.append("slikePlovila", files[i]);
       }
 
-      const response = await fetch(`http://localhost:3000/boats/${this.$route.params.id}/upload`, {
+      const response = await fetch(config.baseUrl + `/boats/${this.$route.params.id}/upload`, {
         method: "PATCH",
         credentials: "include",
         body: formData
@@ -121,7 +124,7 @@ export default {
   },
   async mounted() {
     try {
-      const response = await fetch(`http://localhost:3000/boats/${this.$route.params.id}`, {
+      const response = await fetch(config.baseUrl + `/boats/${this.$route.params.id}`, {
         method: "GET",
         credentials: "include"
       });

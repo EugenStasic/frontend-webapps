@@ -35,6 +35,8 @@
 
   
 <script>
+import config from '../config.js';
+
 export default {
     data() {
         return {
@@ -45,7 +47,7 @@ export default {
       async deleteBoat(id) {
       if (window.confirm("Jeste li sigurni da želite izbrisati plovilo?")) {
         try {
-          const response = await fetch(`http://localhost:3000/boats/${id}`, {
+          const response = await fetch(config.baseUrl+`/boats/${id}`, {
             method: "DELETE",
             credentials: "include"
           });
@@ -65,12 +67,12 @@ export default {
 
         getBoatImageUrl(imageName) {
     const adjustedName = imageName.substring(8);
-    return `http://localhost:3000/boats/slike/${adjustedName}`;
+    return config.baseUrl+`/boats/slike/${adjustedName}`;
 }
     },
     async mounted() {
         try {
-            const response = await fetch("http://localhost:3000/boats/me", {
+            const response = await fetch(config.baseUrl + '/boats/me', {
                 method: "GET",
                 credentials: "include"
             });

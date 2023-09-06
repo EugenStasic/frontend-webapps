@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import config from '../config.js';
+
 export default {
   data() {
     return {
@@ -39,24 +41,31 @@ export default {
   methods: {
     async login() {
       try {
-        const response = await fetch("http://localhost:3000/users/login", {
-          method: "POST",
+        const response = await fetch(config.baseUrl + '/users/login', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             email: this.email,
             password: this.password
           }),
-          credentials: "include"
+          credentials: 'include'
         });
-        const data = await response.json();
-        this.message = data.message;
-        if (data.success) {
-          this.$router.push("/home");
+
+        if (response.ok) {
+          const data = await response.json();
+          this.message = data.message;
+
+          if (data.success) {
+            this.$router.push('/home');
+          }
+        } else {
+          this.message = 'Error logging in!';
         }
       } catch (error) {
-        this.message = "Error logging in!";
+        console.log("Error:", error);
+        this.message = 'Error logging in!';
       }
     }
   }

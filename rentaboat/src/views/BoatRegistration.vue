@@ -53,6 +53,8 @@
 
   
   <script>
+  import config from '../config.js';
+  
   export default {
   data() {
     return {
@@ -83,7 +85,7 @@
         for(let i = 0; i < files.length; i++) {
             formData.append('slikePlovila', files[i]);
         }
-          const response = await fetch("http://localhost:3000/boats/create", {
+          const response = await fetch(config.baseUrl + '/boats/create', {
             method: "POST",
             body: formData,
             credentials: "include"

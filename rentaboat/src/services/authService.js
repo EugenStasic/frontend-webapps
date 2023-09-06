@@ -1,3 +1,5 @@
+import config from  '../config.js';
+
 async function fetchAPI(url, options = {}) {
     try {
       const response = await fetch(url, {
@@ -19,7 +21,7 @@ async function fetchAPI(url, options = {}) {
   
   export async function checkAuth() {
     try {
-      const data = await fetchAPI("http://localhost:3000/users/checkAuth", {
+      const data = await fetchAPI(config.baseUrl + '/users/checkAuth', {
         method: "GET",
       });
   
@@ -32,7 +34,7 @@ async function fetchAPI(url, options = {}) {
   
   export async function logout() {
     try {
-      await fetchAPI("http://localhost:3000/users/logout", {
+      await fetchAPI(config.baseUrl + '/users/logout', {
         method: "GET",
       });
     } catch (error) {

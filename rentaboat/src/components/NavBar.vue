@@ -30,7 +30,6 @@
   display: flex;
   gap: 1rem;
 }
-/* your existing styles */
 </style>
 
 <script>
@@ -100,7 +99,7 @@ export default {
   align-items: center;
 }
 .nav-link {
-  margin: 0 15px;  /* This adds space to the left and right of each nav link */
-  font-size: 1.2em;  /* This increases the font size */
+  margin: 0 15px;
+  font-size: 1.2em; 
 }
 </style>

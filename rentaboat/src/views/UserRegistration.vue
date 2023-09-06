@@ -45,6 +45,8 @@
 </template>
 
 <script>
+import config from '../config.js';
+
 export default {
   data() {
     return {
@@ -58,7 +60,7 @@ export default {
   methods: {
     async register() {
       try {
-        const response = await fetch("http://localhost:3000/users/register", {
+        const response = await fetch(config.baseUrl + '/users/register', {
           method: "POST",
           headers: {
             "Content-Type": "application/json"

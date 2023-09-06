@@ -126,6 +126,8 @@
 </template>
 
 <script>
+import config from '../config.js';
+
 export default {
   data() {
     return {
@@ -145,11 +147,11 @@ export default {
     },
   },
   async mounted() {
-    const userResponse = await fetch('http://localhost:3000/users/me', {credentials: "include"});
+    const userResponse = await fetch(config.baseUrl + '/users/me', {credentials: "include"});
     const user = await userResponse.json();
     this.userId = user._id;
 
-    const bookingsResponse = await fetch('http://localhost:3000/bookings/me', {credentials: "include"});
+    const bookingsResponse = await fetch(config.baseUrl + '/bookings/me', {credentials: "include"});
     const allBookings = await bookingsResponse.json();
 
     this.myBookings = allBookings.filter(booking => booking.renter === this.userId);
@@ -157,7 +159,7 @@ export default {
   },
   methods: {
     getBoatImageUrl(imageName) {
-      return `http://localhost:3000/boats/slike/${imageName.substring(8)}`;
+      return config.baseUrl + `/boats/slike/${imageName.substring(8)}`;
     },
     formatDate(value) {
       const date = new Date(value);
@@ -166,7 +168,7 @@ export default {
     async cancelBooking(id) {
       if( window.confirm("Jeste li sigurni da želite otkazati rezervaciju?")){
       try {
-        const response = await fetch(`http://localhost:3000/bookings/${id}`, {
+        const response = await fetch(config.baseUrl + '/bookings/${id}', {
           method: 'DELETE',
           credentials: 'include',
         });
@@ -195,7 +197,7 @@ export default {
       const rating = prompt("Ocijeni plovilo 1 - 5");
       if (rating >= 1 && rating <= 5) {
         try {
-          const response = await fetch(`http://localhost:3000/boats/${booking.boat._id}/rate`, {
+          const response = await fetch(config.baseUrl + '/boats/${booking.boat._id}/rate', {
             method: 'PATCH',
             credentials: 'include',
             headers: {

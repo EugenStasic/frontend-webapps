@@ -101,6 +101,8 @@
 </template>
 
 <script>
+import config from '../config.js';
+
 export default {
   data() {
     return {
@@ -157,18 +159,18 @@ export default {
       this.unavailableDates = [];
 
       const id = this.$route.params.id;
-      const response = await fetch(`http://localhost:3000/boats/${id}`);
+      const response = await fetch(config.baseUrl + `/boats/${id}`);
       this.boat = await response.json();
 
-      const userBookingsResponse = await fetch(`http://localhost:3000/bookings/renter`, { credentials: 'include' });
+      const userBookingsResponse = await fetch(config.baseUrl + '/bookings/renter', { credentials: 'include' });
       this.userBookings = await userBookingsResponse.json();
       this.calculateUnavailableForUser();
 
-      const currentUserResponse = await fetch('http://localhost:3000/users/me', { credentials: "include" });
+      const currentUserResponse = await fetch(config.baseUrl + '/users/me', { credentials: "include" });
       const currentUser = await currentUserResponse.json();
       this.userId = currentUser._id;
 
-      const unavailableDatesResponse = await fetch(`http://localhost:3000/boats/${this.boat._id}/unavailable-dates`);
+      const unavailableDatesResponse = await fetch(config.baseUrl + `/boats/${this.boat._id}/unavailable-dates`);
       this.unavailableDates = await unavailableDatesResponse.json();
 
     } catch (error) {
@@ -179,7 +181,7 @@ export default {
   methods: {
     getBoatImageUrl(imageName) {
       const adjustedName = imageName.substring(8);
-      return `http://localhost:3000/boats/slike/${adjustedName}`;
+      return config.baseUrl + `/boats/slike/${adjustedName}`;
     },
     nextPhoto() {
       if (this.currentPhotoIndex < this.boat.slikePlovila.length - 1) {
@@ -214,7 +216,7 @@ export default {
         renterContact: this.renterContact
       };
 
-      const response = await fetch('http://localhost:3000/bookings/create', {
+      const response = await fetch(config.baseUrl + '/bookings/create', {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(sendData),

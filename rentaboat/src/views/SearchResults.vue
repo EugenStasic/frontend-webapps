@@ -60,6 +60,8 @@
 
 
 <script>
+import config from '../config.js';
+
 export default {
   data() {
     return {
@@ -77,12 +79,10 @@ export default {
   },
   async mounted() {
     try {
-    const currentUserResponse = await fetch('http://localhost:3000/users/me', { credentials: "include" });
+    const currentUserResponse = await fetch(config.baseUrl+'/users/me', { credentials: "include" });
     const currentUser = await currentUserResponse.json();
     this.userId = currentUser._id;
-    console.log("Current User ID:", this.userId);
   } catch(error) {
-    console.log("User not logged in:", error);
     this.userId = null;
   }
     await this.getAllBoats();
@@ -93,7 +93,7 @@ export default {
   methods: {
     async getAllBoats() {
   try {
-    let url = new URL("http://localhost:3000/search/boats");
+    let url = new URL(config.baseUrl+"/search/boats");
 
     if (this.ime) url.searchParams.append('ime', this.ime);
     if (this.tip) url.searchParams.append('tip', this.tip);
@@ -112,7 +112,6 @@ export default {
         }
         
         const isOwner = this.userId ? (boat.owner === this.userId) : false;
-        console.log(`Is Owner for boat ${boat._id}:`, isOwner); 
           return { ...boat, averageRating: avg, isOwner };
           });
         } else {
@@ -124,11 +123,11 @@ export default {
     },
     getBoatImageUrl(imageName) {
       const adjustedName = imageName.substring(8);
-      return `http://localhost:3000/boats/slike/${adjustedName}`;
+      return config.baseUrl+`/boats/slike/${adjustedName}`;
     },
     async fetchUniqueLocations() {
       try {
-        const response = await fetch("http://localhost:3000/search/unique-locations");
+        const response = await fetch(config.baseUrl+"/search/unique-locations");
         this.uniqueLocations = await response.json();
       } catch (error) {
         console.error("Error fetching unique locations:", error);
@@ -136,7 +135,7 @@ export default {
     },
     async fetchMaxMotorPower() {
       try {
-        const response = await fetch("http://localhost:3000/search/max-motor-power");
+        const response = await fetch(config.baseUrl+"/search/max-motor-power");
         const result = await response.json();
         this.maxMotorPower = result.snagaMotora;
       } catch (error) {
@@ -145,7 +144,7 @@ export default {
     },
     async fetchMaxBoatLength() {
       try {
-        const response = await fetch("http://localhost:3000/search/max-boat-length");
+        const response = await fetch(config.baseUrl+"/search/max-boat-length");
         const result = await response.json();
         this.maxBoatLength = result.duljinaPlovila;
       } catch (error) {
