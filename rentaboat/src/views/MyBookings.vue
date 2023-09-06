@@ -20,14 +20,35 @@
     </div>
 
     <div class="content-container">
-      <h1>Moje Rezervacije</h1>
-      
-      <div v-if="filteredMyBookings.length === 0 && filteredMyBoatsBookings.length === 0">
-        <p>Nemate rezervacija. Pretražite ponudu i izaberite plovilo.</p>
-      </div>
+        <!-- Main Heading -->
+  <h1 v-if="showSection === 'mojeRezervacije'">Moje Rezervacije</h1>
+  <h1 v-if="showSection === 'rezervacijeMojihPlovila'">Rezervacije mojih plovila</h1>
+
+  <!-- Moje Rezervacije -->
+  <div v-if="showSection === 'mojeRezervacije'">
+    <h2 v-if="filterStatus === 'upcoming'">Nadolazeće Rezervacije</h2>
+    <p v-if="filteredMyBookings.length === 0 && filterStatus === 'upcoming'">Nemate nadolazećih rezervacija. Da biste rezervirali plovilo uputite se na <router-link to="/search">pretragu plovila</router-link>.</p>
+
+    <h2 v-if="filterStatus === 'ongoing'">Charter u tijeku</h2>
+    <p v-if="filteredMyBookings.length === 0 && filterStatus === 'ongoing'">Nemate charter za ovaj period.</p>
+
+    <h2 v-if="filterStatus === 'past'">Završeni Charter</h2>
+    <p v-if="filteredMyBookings.length === 0 && filterStatus === 'past'">Nema charter-a za prikaz.</p>
+  </div>
+
+  <!-- Rezervacije mojih plovila -->
+  <div v-if="showSection === 'rezervacijeMojihPlovila'">
+    <h2 v-if="filterStatus === 'upcoming'">Nadolazeće Rezervacije</h2>
+    <p v-if="filteredMyBoatsBookings.length === 0 && filterStatus === 'upcoming'">Nemate nadolazećih rezervacija za vaše plovilo. Ako nemate registrirano plovilo možete ga registrirati <router-link to="/register-boat">ovdje</router-link>.</p>
+
+    <h2 v-if="filterStatus === 'ongoing'">Charter u tijeku</h2>
+    <p v-if="filteredMyBoatsBookings.length === 0 && filterStatus === 'ongoing'">Nemate charter za ovaj period.</p>
+
+    <h2 v-if="filterStatus === 'past'">Završeni Charter</h2>
+    <p v-if="filteredMyBoatsBookings.length === 0 && filterStatus === 'past'">Nema charter-a za prikaz.</p>
+  </div>
 
       <div v-if="showSection === 'rezervacijeMojihPlovila' && filteredMyBoatsBookings.length > 0">
-  <h2>Rezervacije mojih plovila</h2>
   <div class="booking-card" style="border: 1px solid #ccc; padding: 16px; margin-bottom: 16px;" v-for="booking in filteredMyBoatsBookings" :key="booking._id">
     <div class="row">
       <div class="col-md-2" image-container>
@@ -64,7 +85,6 @@
 </div>
 
       <div v-if="showSection === 'mojeRezervacije' && filteredMyBookings.length > 0">
-        <h2>Moje rezervacije</h2>
         <div class="booking-card" style="border: 1px solid #ccc; padding: 16px; margin-bottom: 16px;" v-for="booking in filteredMyBookings" :key="booking._id">
           <div class="row">
             <div class="col-md-2" image-container>

@@ -24,14 +24,14 @@
           <p><strong>Snaga Motora:</strong> {{ boat.snagaMotora }} HP</p>
           <p><strong>Duljina Plovila:</strong> {{ boat.duljinaPlovila }} m</p>
           <p><strong>Cijena Plovila:</strong> {{ boat.cijenaPlovila }},00€</p>
-        </div>
-        <hr class="my-4">
-        <div class="boat-description">
-          <p>{{ boat.opis }}</p>
+          <hr class="my-4">
+            <div class="boat-description">
+              <p>{{ boat.opis }}</p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="booking-form card">
+    <div v-if="userId !== boat.owner && boat && Object.keys(boat).length > 0" class="booking-form card">
       <div class="card-body">
         <h2 class="card-title">Iznajmi Plovilo</h2>
         <div class="form-group md-form md-outline input-with-post-icon datepicker">
@@ -346,9 +346,11 @@ export default {
     background-color: orange;
   }
   .boat-description {
-    max-width: 650px;
-    word-wrap: break-word;
-  }
+  max-width: 650px;
+  word-wrap: break-word;
+  white-space: pre-line; 
+  margin: auto; 
+}
 
 
   .dropdown-list {

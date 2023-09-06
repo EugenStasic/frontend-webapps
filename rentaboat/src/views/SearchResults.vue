@@ -8,6 +8,11 @@
           <input class="form-control" v-model="ime" placeholder="Ime plovila...">
           <select class="form-control" v-model="tip">
             <option value="">Svi tipovi</option>
+            <option value="Gliser">Gliser</option>
+            <option value="Gumenjak">Gumenjak</option>
+            <option value="Jedrilica">Jedrilica</option>
+            <option value="Katamaran">Katamaran</option>
+            <option value="Luksuzna Jahta">Luksuzna Jahta</option>
           </select>
           <select class="form-control" v-model="lokacijaPlovila">
             <option value="">Sve Lokacije</option>
@@ -25,8 +30,10 @@
 
       <div class="boat-cards-container row">
         <div v-for="boat in boats" :key="boat._id" class="col-md-2 mb-3">
-          <div class="card">
+          <div class="card" :class="{ 'owner-card': boat.isOwner }">
             <router-link :to="`/boat-ad/${boat._id}`" class="boat-card-link">
+              <div v-if="boat.isOwner" class="owner-label">Vaše Plovilo</div>
+              <div v-if="!boat.isOwner" class="owner-label-placeholder"></div>
               <div class="image-container">
                 <img v-if="boat.slikePlovila && boat.slikePlovila.length" :src="getBoatImageUrl(boat.slikePlovila[0])" alt="Slika plovila" class="card-img-top"/>
               </div>
@@ -64,10 +71,20 @@ export default {
       snagaMotoraMax: 600,
       duljinaPlovilaMax: 50,
       maxMotorPower: 600,
-      maxBoatLength: 50
+      maxBoatLength: 50,
+      userId: null,
     }
   },
   async mounted() {
+    try {
+    const currentUserResponse = await fetch('http://localhost:3000/users/me', { credentials: "include" });
+    const currentUser = await currentUserResponse.json();
+    this.userId = currentUser._id;
+    console.log("Current User ID:", this.userId);
+  } catch(error) {
+    console.log("User not logged in:", error);
+    this.userId = null;
+  }
     await this.getAllBoats();
     await this.fetchUniqueLocations();
     await this.fetchMaxMotorPower();
@@ -75,29 +92,32 @@ export default {
   },
   methods: {
     async getAllBoats() {
-      try {
-        let url = new URL("http://localhost:3000/search/boats");
+  try {
+    let url = new URL("http://localhost:3000/search/boats");
 
-        if (this.ime) url.searchParams.append('ime', this.ime);
-        if (this.tip) url.searchParams.append('tip', this.tip);
-        if (this.lokacijaPlovila) url.searchParams.append('lokacijaPlovila', this.lokacijaPlovila);
-        if (this.snagaMotoraMax) url.searchParams.append('snagaMotoraMax', this.snagaMotoraMax);
-        if (this.duljinaPlovilaMax) url.searchParams.append('duljinaPlovilaMax', this.duljinaPlovilaMax);
+    if (this.ime) url.searchParams.append('ime', this.ime);
+    if (this.tip) url.searchParams.append('tip', this.tip);
+    if (this.lokacijaPlovila) url.searchParams.append('lokacijaPlovila', this.lokacijaPlovila);
+    if (this.snagaMotoraMax) url.searchParams.append('snagaMotoraMax', this.snagaMotoraMax);
+    if (this.duljinaPlovilaMax) url.searchParams.append('duljinaPlovilaMax', this.duljinaPlovilaMax);
 
-        const response = await fetch(url);
-        if (response.status === 200) {
-          const boatsData = await response.json();
-          this.boats = boatsData.map(boat => {
-            if (boat.ocjene && boat.ocjene.length > 0) {
-              const sum = boat.ocjene.reduce((a, b) => a + b, 0);
-              const avg = sum / boat.ocjene.length;
-              return { ...boat, averageRating: avg };
-            }
-            return { ...boat, averageRating: 0 };
+    const response = await fetch(url);
+    if (response.status === 200) {
+      const boatsData = await response.json();
+      this.boats = boatsData.map(boat => {
+        let avg = 0;
+        if (boat.ocjene && boat.ocjene.length > 0) {
+          const sum = boat.ocjene.reduce((a, b) => a + b, 0);
+          avg = sum / boat.ocjene.length;
+        }
+        
+        const isOwner = this.userId ? (boat.owner === this.userId) : false;
+        console.log(`Is Owner for boat ${boat._id}:`, isOwner); 
+          return { ...boat, averageRating: avg, isOwner };
           });
         } else {
           console.error("Error retrieving boats:", await response.text());
-        }
+            }
       } catch (error) {
         console.error("Error:", error);
       }
@@ -170,8 +190,19 @@ export default {
     margin-left: 280px;
     display: flex;
     flex-wrap: wrap;
+    flex: 0 0 auto;
+    width: 90%;
+    min-width: 80%;
     gap: 20px;
   }
+  .boat-cards-container .col-md-2 {
+  flex: 0 0 auto;
+  width: 360px;
+}
+.owner-label-placeholder{
+  height: 30px;
+}
+
 
   .image-container {
     width: 100%;
@@ -187,6 +218,15 @@ export default {
     text-decoration: none;
     color: black;
   }
+
+  .owner-card {
+  border: 4px solid gold;
+}
+
+.owner-label {
+  color: gold;
+  font-weight: bold;
+}
 
   .boat-name,
   .card-text > strong {
