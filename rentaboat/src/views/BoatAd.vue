@@ -5,7 +5,7 @@
         <div class="image-container">
           <img 
             v-if="boat.slikePlovila && boat.slikePlovila.length"
-            :src="getBoatImageUrl(boat.slikePlovila[currentPhotoIndex])" 
+            :src="getBoatImageUrl(boat._id, currentPhotoIndex)"
             alt="Slika plovila" 
             class="boat-image"
           />
@@ -93,8 +93,7 @@
         <p class="error-message">{{ errorMessage }}</p>
       </div>
       <div v-if="bookingSuccess" class="card-footer success-message">
-        <h2>Uspješno ste rezervirali plovilo!</h2>
-        <p>Detalje možete pronaći na <router-link to="/my-bookings">My Bookings stranici</router-link>.</p>
+        <p>Uspješno ste rezervirali plovilo!Uspješno ste rezervirali plovilo! Detalje možete pronaći na <router-link to="/my-bookings">My Bookings stranici</router-link>.</p>
       </div>
     </div>
   </div>
@@ -179,9 +178,8 @@ export default {
     }
   },
   methods: {
-    getBoatImageUrl(imageName) {
-      const adjustedName = imageName.substring(8);
-      return config.baseUrl + `/boats/slike/${adjustedName}`;
+    getBoatImageUrl(boatId, imageIndex) {
+      return `${config.baseUrl}/boats/images/${boatId}/${imageIndex}`;
     },
     nextPhoto() {
       if (this.currentPhotoIndex < this.boat.slikePlovila.length - 1) {
@@ -305,7 +303,9 @@ export default {
     margin-top: 20px;
   }
 
-
+  .btn-primary{
+    margin-top: 10px;
+  }
   .image-container {
   width: 100%;
   height: 300px;

@@ -1,5 +1,6 @@
 <template>
   <div class="layout-container container">
+    
     <div id="selection-menu" class="mb-4">
       <div class="menu-item">
         <button class="btn btn-primary" @click="showSection = 'mojeRezervacije'; filterStatus = 'upcoming'">Moje Rezervacije</button>
@@ -20,23 +21,22 @@
     </div>
 
     <div class="content-container">
-        <!-- Main Heading -->
-  <h1 v-if="showSection === 'mojeRezervacije'">Moje Rezervacije</h1>
-  <h1 v-if="showSection === 'rezervacijeMojihPlovila'">Rezervacije mojih plovila</h1>
 
-  <!-- Moje Rezervacije -->
-  <div v-if="showSection === 'mojeRezervacije'">
-    <h2 v-if="filterStatus === 'upcoming'">Nadolazeće Rezervacije</h2>
-    <p v-if="filteredMyBookings.length === 0 && filterStatus === 'upcoming'">Nemate nadolazećih rezervacija. Da biste rezervirali plovilo uputite se na <router-link to="/search">pretragu plovila</router-link>.</p>
+        <h1 v-if="showSection === 'mojeRezervacije'">Moje Rezervacije</h1>
+        <h1 v-if="showSection === 'rezervacijeMojihPlovila'">Rezervacije mojih plovila</h1>
 
-    <h2 v-if="filterStatus === 'ongoing'">Charter u tijeku</h2>
-    <p v-if="filteredMyBookings.length === 0 && filterStatus === 'ongoing'">Nemate charter za ovaj period.</p>
+        <div v-if="showSection === 'mojeRezervacije'">
+          <h2 v-if="filterStatus === 'upcoming'">Nadolazeće Rezervacije</h2>
+          <p v-if="filteredMyBookings.length === 0 && filterStatus === 'upcoming'">Nemate nadolazećih rezervacija. Da biste rezervirali plovilo uputite se na <router-link to="/search">pretragu plovila</router-link>.</p>
 
-    <h2 v-if="filterStatus === 'past'">Završeni Charter</h2>
-    <p v-if="filteredMyBookings.length === 0 && filterStatus === 'past'">Nema charter-a za prikaz.</p>
-  </div>
+          <h2 v-if="filterStatus === 'ongoing'">Charter u tijeku</h2>
+          <p v-if="filteredMyBookings.length === 0 && filterStatus === 'ongoing'">Nemate charter za ovaj period.</p>
 
-  <!-- Rezervacije mojih plovila -->
+          <h2 v-if="filterStatus === 'past'">Završeni Charter</h2>
+          <p v-if="filteredMyBookings.length === 0 && filterStatus === 'past'">Nema charter-a za prikaz.</p>
+        </div>
+
+
   <div v-if="showSection === 'rezervacijeMojihPlovila'">
     <h2 v-if="filterStatus === 'upcoming'">Nadolazeće Rezervacije</h2>
     <p v-if="filteredMyBoatsBookings.length === 0 && filterStatus === 'upcoming'">Nemate nadolazećih rezervacija za vaše plovilo. Ako nemate registrirano plovilo možete ga registrirati <router-link to="/register-boat">ovdje</router-link>.</p>
@@ -158,9 +158,9 @@ export default {
     this.myBoatsBookings = allBookings.filter(booking => booking.owner === this.userId);
   },
   methods: {
-    getBoatImageUrl(imageName) {
-      return config.baseUrl + `/boats/slike/${imageName.substring(8)}`;
-    },
+    getBoatImageUrl(imageUrl) {
+  return imageUrl ? imageUrl : null; // or return a default image URL
+},
     formatDate(value) {
       const date = new Date(value);
       return date.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
@@ -168,7 +168,7 @@ export default {
     async cancelBooking(id) {
       if( window.confirm("Jeste li sigurni da želite otkazati rezervaciju?")){
       try {
-        const response = await fetch(config.baseUrl + '/bookings/${id}', {
+        const response = await fetch(config.baseUrl + `/bookings/${id}`, {
           method: 'DELETE',
           credentials: 'include',
         });
@@ -197,7 +197,7 @@ export default {
       const rating = prompt("Ocijeni plovilo 1 - 5");
       if (rating >= 1 && rating <= 5) {
         try {
-          const response = await fetch(config.baseUrl + '/boats/${booking.boat._id}/rate', {
+          const response = await fetch(config.baseUrl + `/boats/${booking.boat._id}/rate`, {
             method: 'PATCH',
             credentials: 'include',
             headers: {
@@ -254,6 +254,7 @@ export default {
 
   .content-container {
     margin-left: 220px;
+    text-align: center;
   }
 
   .booking-card {
@@ -263,15 +264,6 @@ export default {
     border: 1px solid #a6a6a6;
     margin-bottom: 20px;
     padding: 10px;
-  }
-
-  .image-container {
-    width: 100px;
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
   }
 
   .col-md-2 img {

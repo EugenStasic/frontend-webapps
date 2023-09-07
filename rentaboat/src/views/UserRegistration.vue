@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <h1 class="header-register">Registracija</h1>
     <form @submit.prevent="register" class="register-form">
       <div class="form-group">
@@ -87,6 +87,15 @@ export default {
 </script>
 
 <style scoped>
+.container{
+  margin: auto;
+  margin-top: 10%;
+  max-width: fit-content;
+  padding: 100px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
 .header-register {
   font-family: 'Arial', sans-serif;
   font-size: 2em;
@@ -98,9 +107,12 @@ export default {
 }
 
 .custom-input {
-  width: 20%;
+  width: 100%;
   margin: auto;
-  text-align: center; 
+  text-align: center;
+  min-width: 200px;
+  width: 300px;
+  padding: 10px;
 }
 
 .register-form {

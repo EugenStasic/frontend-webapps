@@ -1,9 +1,10 @@
 <template>
-  <div class="nav-item dropdown" ref="dropdownMenu">
+  <div class="nav-item dropdown" ref="dropdownMenu"
+        @mouseenter="openDropdown"
+        @mouseleave="closeDropdown">
     <a class="nav-link dropdown-toggle"
        id="navbarDropdown"
        role="button"
-       @click="toggleDropdown"
        aria-haspopup="true"
        :aria-expanded="dropdownOpen">PROFIL</a>
     <div class="dropdown-menu" :class="{ show: dropdownOpen }" aria-labelledby="navbarDropdown">
@@ -23,8 +24,11 @@ export default {
     };
   },
   methods: {
-    toggleDropdown() {
-      this.dropdownOpen = !this.dropdownOpen;
+    openDropdown() {
+      this.dropdownOpen = true;
+    },
+    closeDropdown() {
+      this.dropdownOpen = false;
     }
   }
 }

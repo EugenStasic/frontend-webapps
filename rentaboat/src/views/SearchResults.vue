@@ -35,7 +35,7 @@
               <div v-if="boat.isOwner" class="owner-label">Vaše Plovilo</div>
               <div v-if="!boat.isOwner" class="owner-label-placeholder"></div>
               <div class="image-container">
-                <img v-if="boat.slikePlovila && boat.slikePlovila.length" :src="getBoatImageUrl(boat.slikePlovila[0])" alt="Slika plovila" class="card-img-top"/>
+                <img v-if="boat.slikePlovila && boat.slikePlovila.length" :src="getBoatImageUrl(boat._id, 0)" alt="Slika plovila" class="card-img-top"/>
               </div>
               <div class="star-container">
                 <span v-for="n in 5" :key="n">
@@ -121,10 +121,9 @@ export default {
         console.error("Error:", error);
       }
     },
-    getBoatImageUrl(imageName) {
-      const adjustedName = imageName.substring(8);
-      return config.baseUrl+`/boats/slike/${adjustedName}`;
-    },
+    getBoatImageUrl(boatId, imageIndex) {
+      return this.boats.find(boat => boat._id === boatId).slikePlovila[imageIndex];
+      },
     async fetchUniqueLocations() {
       try {
         const response = await fetch(config.baseUrl+"/search/unique-locations");
@@ -230,17 +229,5 @@ export default {
   .boat-name,
   .card-text > strong {
     font-weight: bold;
-  }
-
-  .star-full {
-    color: gold;
-  }
-
-  .star-half {
-    color: gold;
-  }
-
-  .star-empty {
-    color: grey;
   }
 </style>

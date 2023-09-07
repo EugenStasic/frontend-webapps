@@ -30,6 +30,11 @@
       </div>
 
       <div class="form-group">
+        <label for="cijenaPlovila">Cijena plovila:</label>
+        <input type="text" class="form-control" id="cijenaPlovila" v-model="boat.cijenaPlovila" placeholder="Cijena plovila" required>
+      </div>
+
+      <div class="form-group">
         <label for="lokacijaPlovila">Lokacija plovila:</label>
         <input type="text" class="form-control" id="lokacijaPlovila" v-model="boat.lokacijaPlovila" placeholder="Lokacija plovila" required>
       </div>
@@ -40,23 +45,17 @@
       </div>
 
       <div class="form-group">
-        <label for="cijenaPlovila">Cijena plovila:</label>
-        <input type="text" class="form-control" id="cijenaPlovila" v-model="boat.cijenaPlovila" placeholder="Cijena plovila" required>
+        <label>Dodaj slike:</label>
+      <input type="file" class="form-control-file" ref="fileInput" multiple @change="addImages"/>
       </div>
 
       <button type="submit" class="btn btn-primary">Pohrani promjene</button>
     </form>
 
     <div class="mt-4">
-      <h3>Dodaj slike</h3>
-      <input type="file" class="form-control-file" ref="fileInput" multiple @change="addImages"/>
-      <button class="btn btn-secondary mt-2" @click="uploadImages">Pohrani</button>
-    </div>
-
-    <div class="mt-4">
       <h3>Učitane slike:</h3>
       <div v-for="(image, index) in boat.slikePlovila" :key="index">
-        <img :src="getBoatImageUrl(image)" alt="" width="100" height="100"/>
+        <img :src="getBoatImageUrl(this.$route.params.id, index)" alt="" width="100" height="100"/>
         <button class="btn btn-danger" @click="removeImage(index)">Izbriši</button>
       </div>
     </div>
@@ -70,20 +69,47 @@ import config from '../config.js';
 export default {
   data() {
     return {
-      boat: {}
+      boat: {},
+      selectedFiles: []
     };
   },
+
+  async mounted() {
+    try {
+      if (this.selectedFiles.length) {
+          await this.uploadImages();
+        }
+      const response = await fetch(
+        `${config.baseUrl}/boats/${this.$route.params.id}`, {
+          method: "GET",
+          credentials: "include"
+        }
+      );
+
+      const data = await response.json();
+      this.boat = data;
+    } catch (error) {
+      console.error('There was an error fetching the boat details:', error);
+    }
+  },
+
   methods: {
     async updateBoat(shouldRedirect = true) {
       try {
-        const response = await fetch(config.baseUrl + `/boats/${this.$route.params.id}`, {
-          method: "PATCH",
-          credentials: "include",
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(this.boat)
-        });
+        if (this.selectedFiles.length) {
+          await this.uploadImages();
+        }
+
+        const response = await fetch(
+          `${config.baseUrl}/boats/${this.$route.params.id}`, {
+            method: "PATCH",
+            credentials: "include",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this.boat)
+          }
+        );
 
         if (!response.ok) {
           throw new Error('Error updating the boat');
@@ -96,46 +122,62 @@ export default {
         console.error('There was an error updating the boat:', error);
       }
     },
-    getBoatImageUrl(imageName) {
-      const adjustedName = imageName.substring(8);
-      return config.baseUrl + `/boats/slike/${adjustedName}`;
+
+    getBoatImageUrl(boatId, imageIndex) {
+      return `${config.baseUrl}/boats/images/${boatId}/${imageIndex}`;
     },
-    async addImages() {
-      const files = this.$refs.fileInput.files;
+
+    addImages() {
+      this.selectedFiles = [...this.$refs.fileInput.files];
+    },
+
+    async uploadImages() {
       let formData = new FormData();
 
-      for (let i = 0; i < files.length; i++) {
-        formData.append("slikePlovila", files[i]);
+      for (let file of this.selectedFiles) {
+        formData.append("slikePlovila", file);
       }
 
-      const response = await fetch(config.baseUrl + `/boats/${this.$route.params.id}/upload`, {
-        method: "PATCH",
-        credentials: "include",
-        body: formData
-      });
+      try {
+        const response = await fetch(
+          `${config.baseUrl}/boats/${this.$route.params.id}/upload`, {
+            method: "PATCH",
+            credentials: "include",
+            body: formData
+          }
+        );
 
-      const data = await response.json();
-      this.boat = data;
+        if (!response.ok) {
+          throw new Error('Error uploading images');
+        }
+
+        const data = await response.json();
+        this.boat.slikePlovila = data.slikePlovila;
+
+        this.selectedFiles = [];
+      } catch (error) {
+        console.error('There was an error uploading the images:', error);
+      }
     },
     async removeImage(index) {
-      this.boat.slikePlovila.splice(index, 1);
-      await this.updateBoat(false);
-    }
-  },
-  async mounted() {
-    try {
-      const response = await fetch(config.baseUrl + `/boats/${this.$route.params.id}`, {
-        method: "GET",
-        credentials: "include"
-      });
+      try {
+        const response = await fetch(config.baseUrl + `/boats/${this.$route.params.id}/remove-image/${index}`, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
 
-      const data = await response.json();
-      this.boat = data;
-    } catch (error) {
-      console.error('There was an error fetching the boat details:', error);
+        if (!response.ok) {
+          throw new Error('Failed to delete image');
+        }
+
+        this.boat.slikePlovila.splice(index, 1);
+        await this.updateBoat(false);
+      } catch (error) {
+        console.error("Failed to remove image:", error);
+      }
     }
   }
-}
+ }
 </script>
 
 <style scoped>
@@ -147,9 +189,16 @@ export default {
     max-width: 600px;
     margin: auto;
   }
+  .form-group {
+    margin-bottom: 1rem;
+}
+.form-control{
+  text-align: center;
+}
 
   form {
     border: 1px solid #ccc;
+    background-color: #ffffff;
     border-radius: 5px;
   }
 

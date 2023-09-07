@@ -11,7 +11,7 @@
           <div class="card">
             <router-link :to="`/boat-ad/${boat._id}`" class="boat-card-link">
               <div class="image-container">
-                <img v-if="boat.slikePlovila && boat.slikePlovila.length" :src="getBoatImageUrl(boat.slikePlovila[0])" alt="Slika plovila" class="card-img-top"/>
+                <img v-if="boat.slikePlovila && boat.slikePlovila.length" :src="getBoatImageUrl(boat._id, 0)" alt="Slika plovila" class="card-img-top"/>
               </div>
               <div class="card-body">
                 <h5 class="card-title boat-name">{{ boat.ime }}</h5>
@@ -65,9 +65,9 @@ export default {
         this.$router.push(`/edit-boat/${id}`);
         },
 
-        getBoatImageUrl(imageName) {
-    const adjustedName = imageName.substring(8);
-    return config.baseUrl+`/boats/slike/${adjustedName}`;
+        getBoatImageUrl(boatId, imageIndex) {
+  // Instead of constructing the URL, just access the URL from the boat's data
+  return this.boats.find(boat => boat._id === boatId).slikePlovila[imageIndex];
 }
     },
     async mounted() {

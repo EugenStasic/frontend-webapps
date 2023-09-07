@@ -7,7 +7,7 @@
       </div>
       <div v-if="loggedIn" class="right-nav-items">
         <DropdownMenu />
-        <a @click="logout" class="nav-link">Odjava</a>
+        <button @click="logout" class="nav-link btn btn-outline-success my-2 my-sm-0" type="button">Odjava</button>
       </div>
       <div v-else class="right-nav-items">
         <router-link to="/login" class="nav-link">Prijava</router-link>
@@ -17,20 +17,6 @@
   </nav>
 </template>
 
-
-
-<style scoped>
-.navbar-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-.navbar-nav {
-  display: flex;
-  gap: 1rem;
-}
-</style>
 
 <script>
 import DropdownMenu from './DropdownMenu.vue';
@@ -85,6 +71,10 @@ export default {
 </script>
 
 <style scoped>
+.nav-link, .btn-logout {
+  margin: 0 15px;
+  font-size: 1.2em; 
+  }
 .navbar {
   display: flex;
   justify-content: space-between;
