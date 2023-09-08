@@ -39,6 +39,12 @@
         <input type="text" class="form-control" id="lokacijaPlovila" v-model="lokacijaPlovila" placeholder="Lokacija plovila" required>
       </div>
 
+      
+      <div class="form-group">
+        <label for="lokacijaPlovila">Kontakt:</label>
+        <input type="text" class="form-control" id="lokacijaPlovila" v-model="ownerContact" placeholder="Email/Broj" required>
+      </div>
+
       <div class="form-group">
         <label for="opis">Opis plovila:</label>
         <textarea class="form-control" id="opis" v-model="opis" placeholder="Opis plovila" rows="4"></textarea>
@@ -127,10 +133,6 @@
   width: 80%;
   margin: auto;
     margin-bottom: 1rem;
-}
-.label {
-  font-family: 'Arial', sans-serif;
-  font-weight: bold;
 }
 .border-form {
     border-radius: 5px;

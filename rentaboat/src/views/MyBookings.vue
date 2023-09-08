@@ -1,127 +1,125 @@
 <template>
   <div class="layout-container container">
-    
-    <div id="selection-menu" class="mb-4">
-      <div class="menu-item">
-        <button class="btn btn-primary" @click="showSection = 'mojeRezervacije'; filterStatus = 'upcoming'">Moje Rezervacije</button>
-        <div v-if="showSection === 'mojeRezervacije'" class="submenu">
-          <button class="btn btn-secondary" @click="filterStatus = 'upcoming'">Nadolazeće rezervacije</button>
-          <button class="btn btn-secondary" @click="filterStatus = 'ongoing'">Charter u tijeku</button>
-          <button class="btn btn-secondary" @click="filterStatus = 'past'">Završeni Charter</button>
-        </div>
-      </div>
-      <div class="menu-item mt-2">
-        <button class="btn btn-primary" @click="showSection = 'rezervacijeMojihPlovila'; filterStatus = 'upcoming'">Rezervacije mojih plovila</button>
-        <div v-if="showSection === 'rezervacijeMojihPlovila'" class="submenu">
-          <button class="btn btn-secondary" @click="filterStatus = 'upcoming'">Nadolazeće rezervacije</button>
-          <button class="btn btn-secondary" @click="filterStatus = 'ongoing'">Charter u tijeku</button>
-          <button class="btn btn-secondary" @click="filterStatus = 'past'">Završeni Charter</button>
-        </div>
-      </div>
-    </div>
 
-    <div class="content-container">
-
-        <h1 v-if="showSection === 'mojeRezervacije'">Moje Rezervacije</h1>
-        <h1 v-if="showSection === 'rezervacijeMojihPlovila'">Rezervacije mojih plovila</h1>
-
-        <div v-if="showSection === 'mojeRezervacije'">
-          <h2 v-if="filterStatus === 'upcoming'">Nadolazeće Rezervacije</h2>
-          <p v-if="filteredMyBookings.length === 0 && filterStatus === 'upcoming'">Nemate nadolazećih rezervacija. Da biste rezervirali plovilo uputite se na <router-link to="/search">pretragu plovila</router-link>.</p>
-
-          <h2 v-if="filterStatus === 'ongoing'">Charter u tijeku</h2>
-          <p v-if="filteredMyBookings.length === 0 && filterStatus === 'ongoing'">Nemate charter za ovaj period.</p>
-
-          <h2 v-if="filterStatus === 'past'">Završeni Charter</h2>
-          <p v-if="filteredMyBookings.length === 0 && filterStatus === 'past'">Nema charter-a za prikaz.</p>
-        </div>
-
-
-  <div v-if="showSection === 'rezervacijeMojihPlovila'">
-    <h2 v-if="filterStatus === 'upcoming'">Nadolazeće Rezervacije</h2>
-    <p v-if="filteredMyBoatsBookings.length === 0 && filterStatus === 'upcoming'">Nemate nadolazećih rezervacija za vaše plovilo. Ako nemate registrirano plovilo možete ga registrirati <router-link to="/register-boat">ovdje</router-link>.</p>
-
-    <h2 v-if="filterStatus === 'ongoing'">Charter u tijeku</h2>
-    <p v-if="filteredMyBoatsBookings.length === 0 && filterStatus === 'ongoing'">Nemate charter za ovaj period.</p>
-
-    <h2 v-if="filterStatus === 'past'">Završeni Charter</h2>
-    <p v-if="filteredMyBoatsBookings.length === 0 && filterStatus === 'past'">Nema charter-a za prikaz.</p>
-  </div>
-
-      <div v-if="showSection === 'rezervacijeMojihPlovila' && filteredMyBoatsBookings.length > 0">
-  <div class="booking-card" style="border: 1px solid #ccc; padding: 16px; margin-bottom: 16px;" v-for="booking in filteredMyBoatsBookings" :key="booking._id">
-    <div class="row">
-      <div class="col-md-2" image-container>
-        <img v-if="booking.boat.slikePlovila && booking.boat.slikePlovila.length" :src="getBoatImageUrl(booking.boat.slikePlovila[0])" alt="Boat Image" style="width: 100%;" />
-      </div>
-      <div class="col-md-10">
-        <div class="row">
-          <div class="col-md-3">
-            <strong>Model: </strong>{{ booking.boat.ime }}
-          </div>
-          <div class="col-md-3">
-            <strong>Početak: </strong>{{ formatDate(booking.startDate) }}
-          </div>
-          <div class="col-md-3">
-            <strong>Kontakt: </strong>{{ booking.renterContact }}
-          </div>
-          <div class="col-md-3">
-            <button class="btn btn-danger" v-if="booking.status === 'upcoming'" @click="cancelBooking(booking._id)">OTKAŽI REZERVACIJU</button>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-3">
-            <strong>Ukupna cijena: </strong>{{ booking.totalCost }} €
-          </div>
-          <div class="col-md-3">
-            <strong>Kraj: </strong>{{ formatDate(booking.endDate) }}
-          </div>
-
-          <div class="col-md-6"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-      <div v-if="showSection === 'mojeRezervacije' && filteredMyBookings.length > 0">
-        <div class="booking-card" style="border: 1px solid #ccc; padding: 16px; margin-bottom: 16px;" v-for="booking in filteredMyBookings" :key="booking._id">
-          <div class="row">
-            <div class="col-md-2" image-container>
-              <img v-if="booking.boat.slikePlovila && booking.boat.slikePlovila.length" :src="getBoatImageUrl(booking.boat.slikePlovila[0])" alt="Boat Image" style="width: 100%;" />
-            </div>
-            <div class="col-md-10">
-              <div class="row">
-                <div class="col-md-3">
-                  <strong>Model: </strong>{{ booking.boat.ime }}
-                </div>
-                <div class="col-md-3">
-                  <strong>Početak: </strong>{{ formatDate(booking.startDate) }}
-                </div>
-                <div class="col-md-3">
-                  <strong>Kontakt: </strong>{{ booking.boat.ownerContact }}
-                </div>
-                <div class="col-md-3">
-                  <button class="btn btn-danger" v-if="booking.status === 'upcoming'" @click="cancelBooking(booking._id)">OTKAŽI REZERVACIJU</button>
-                  <button class="btn btn-primary" v-if="booking.status === 'past' && !booking.isRated" @click="rateBoat(booking._id)">OCIJENI PLOVILO</button>
-                  <span v-if="booking.status === 'past' && booking.isRated">Ocijenjeno!</span>
-                </div>
+      <div id="selection-menu" class="mb-4">
+          
+          <div class="menu-item">
+              <button class="btn btn-primary" @click="showSection = 'mojeRezervacije'; filterStatus = 'upcoming'">Moje Rezervacije</button>
+              
+              <div v-if="showSection === 'mojeRezervacije'" class="submenu">
+                  <button class="btn btn-secondary" @click="filterStatus = 'upcoming'">Nadolazeće rezervacije</button>
+                  <button class="btn btn-secondary" @click="filterStatus = 'ongoing'">Charter u tijeku</button>
+                  <button class="btn btn-secondary" @click="filterStatus = 'past'">Završeni Charter</button>
               </div>
-              <div class="row">
-                <div class="col-md-3">
-                  <strong>Ukupna cijena: </strong>{{ booking.totalCost }} €
-                </div>
-                <div class="col-md-3">
-                  <strong>Kraj: </strong>{{ formatDate(booking.endDate) }}
-                </div>
-
-                <div class="col-md-6"></div>
-              </div>
-            </div>
           </div>
-        </div>
+
+          <div class="menu-item mt-2">
+              <button class="btn btn-primary" @click="showSection = 'rezervacijeMojihPlovila'; filterStatus = 'upcoming'">Rezervacije mojih plovila</button>
+              
+              <div v-if="showSection === 'rezervacijeMojihPlovila'" class="submenu">
+                  <button class="btn btn-secondary" @click="filterStatus = 'upcoming'">Nadolazeće rezervacije</button>
+                  <button class="btn btn-secondary" @click="filterStatus = 'ongoing'">Charter u tijeku</button>
+                  <button class="btn btn-secondary" @click="filterStatus = 'past'">Završeni Charter</button>
+              </div>
+          </div>
       </div>
-    </div>
+
+      <div class="content-container">
+
+          <h1 v-if="showSection === 'mojeRezervacije'">Moje Rezervacije</h1>
+          <h1 v-if="showSection === 'rezervacijeMojihPlovila'">Rezervacije mojih plovila</h1>
+
+          <div v-if="showSection === 'mojeRezervacije'">
+              <div v-if="filterStatus === 'upcoming'">
+                  <h2>Nadolazeće Rezervacije</h2>
+                  <div class="empty-booking-card">
+                  <p v-if="filteredMyBookings.length === 0">Nemate nadolazećih rezervacija. Da biste rezervirali plovilo uputite se na <router-link to="/search">pretragu plovila</router-link>.</p>
+                  </div>
+              </div>
+              <div v-if="filterStatus === 'ongoing'">
+                  <h2>Charter u tijeku</h2>
+                  <div class="empty-booking-card">
+                  <p v-if="filteredMyBookings.length === 0">Nemate charter za ovaj period.</p>
+                  </div>
+              </div>
+              <div v-if="filterStatus === 'past'">
+                  <h2>Završeni Charter</h2>
+                  <div class="empty-booking-card">
+                  <p v-if="filteredMyBookings.length === 0">Nema charter-a za prikaz.</p>
+                  </div>
+              </div>
+          </div>
+
+          <div v-if="showSection === 'rezervacijeMojihPlovila'">
+              <div v-if="filterStatus === 'upcoming'">
+                  <h2>Nadolazeće Rezervacije</h2>
+                  <div class="empty-booking-card">
+                  <p v-if="filteredMyBoatsBookings.length === 0">Nemate nadolazećih rezervacija za vaše plovilo. Ako nemate registrirano plovilo možete ga registrirati <router-link to="/register-boat">ovdje</router-link>.</p>
+                  </div>
+              </div>
+              <div v-if="filterStatus === 'ongoing'">
+                  <h2>Charter u tijeku</h2>
+                  <div class="empty-booking-card">
+                  <p v-if="filteredMyBoatsBookings.length === 0">Nemate charter za ovaj period.</p>
+                  </div>
+              </div>
+              <div v-if="filterStatus === 'past'">
+                  <h2>Završeni Charter</h2>
+                  <div class="empty-booking-card">
+                  <p v-if="filteredMyBoatsBookings.length === 0">Nema charter-a za prikaz.</p>
+                  </div>
+              </div>
+          </div>
+
+          <div v-if="showSection === 'rezervacijeMojihPlovila' && filteredMyBoatsBookings.length > 0">
+              <div class="booking-card" style="border: 1px solid #ccc; padding: 16px; margin-bottom: 16px;" v-for="booking in filteredMyBoatsBookings" :key="booking._id">
+                  <div class="row">
+                      <div class="col-md-2" image-container>
+                          <img v-if="booking.boat.slikePlovila && booking.boat.slikePlovila.length" :src="getBoatImageUrl(booking.boat.slikePlovila[0])" alt="Boat Image" style="width: 100%;" />
+                      </div>
+                      <div class="col-md-10">
+                          <div class="row">
+                              <div class="col-md-3"><strong>Model: </strong>{{ booking.boat.ime }}</div>
+                              <div class="col-md-3"><strong>Početak: </strong>{{ formatDate(booking.startDate) }}</div>
+                              <div class="col-md-3"><strong>Kontakt: </strong>{{ booking.renterContact }}</div>
+                              <div class="col-md-3">
+                                  <button class="btn btn-danger" v-if="booking.status === 'upcoming'" @click="cancelBooking(booking._id)">OTKAŽI REZERVACIJU</button>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-3"><strong>Ukupna cijena: </strong>{{ booking.totalCost }} €</div>
+                              <div class="col-md-3"><strong>Kraj: </strong>{{ formatDate(booking.endDate) }}</div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <div v-if="showSection === 'mojeRezervacije' && filteredMyBookings.length > 0">
+              <div class="booking-card" style="border: 1px solid #ccc; padding: 16px; margin-bottom: 16px;" v-for="booking in filteredMyBookings" :key="booking._id">
+                  <div class="row">
+                      <div class="col-md-2" image-container>
+                          <img v-if="booking.boat.slikePlovila && booking.boat.slikePlovila.length" :src="getBoatImageUrl(booking.boat.slikePlovila[0])" alt="Boat Image" style="width: 100%;" />
+                      </div>
+                      <div class="col-md-10">
+                          <div class="row">
+                              <div class="col-md-3"><strong>Model: </strong>{{ booking.boat.ime }}</div>
+                              <div class="col-md-3"><strong>Početak: </strong>{{ formatDate(booking.startDate) }}</div>
+                              <div class="col-md-3"><strong>Kontakt: </strong>{{ booking.ownerContact }}</div>
+                              <div class="col-md-3">
+                                  <button class="btn btn-danger" v-if="booking.status === 'upcoming'" @click="cancelBooking(booking._id)">OTKAŽI REZERVACIJU</button>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-3"><strong>Ukupna cijena: </strong>{{ booking.totalCost }} €</div>
+                              <div class="col-md-3"><strong>Kraj: </strong>{{ formatDate(booking.endDate) }}</div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+      </div>
   </div>
 </template>
 
@@ -144,7 +142,7 @@ export default {
     },
     filteredMyBoatsBookings() {
       return this.myBoatsBookings.filter(booking => booking.status === this.filterStatus);
-    },
+    }
   },
   async mounted() {
     const userResponse = await fetch(config.baseUrl + '/users/me', {credentials: "include"});
@@ -159,7 +157,7 @@ export default {
   },
   methods: {
     getBoatImageUrl(imageUrl) {
-  return imageUrl ? imageUrl : null; // or return a default image URL
+  return imageUrl ? imageUrl : null;
 },
     formatDate(value) {
       const date = new Date(value);
@@ -231,6 +229,11 @@ export default {
   .submenu {
     margin-left: 20px;
   }
+.btn-secondary {
+  background: linear-gradient(to left, #14b5f5, #0d6efd);
+  color: #fff;
+  padding: 8px 12px;
+}
   .layout-container {
     display: flex;
     padding-top: 60px;
@@ -264,6 +267,10 @@ export default {
     border: 1px solid #a6a6a6;
     margin-bottom: 20px;
     padding: 10px;
+  }
+  .empty-booking-card{
+    width: 1076px;
+    padding: 30px;
   }
 
   .col-md-2 img {

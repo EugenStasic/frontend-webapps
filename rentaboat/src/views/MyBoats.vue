@@ -1,11 +1,7 @@
 <template>
-  <div class="container"></div>
-  <div>
-    <h1>Moja Plovila</h1>
+  <div class="container">
+    <h1 class="heading">Moja Plovila</h1>
     <div class="layout-container">
-      
-        
-
       <div class="boat-cards-container row">
         <div v-for="boat in boats" :key="boat._id" class="col-md-2 mb-3">
           <div class="card">
@@ -43,33 +39,34 @@ export default {
             boats: []
         };
     },
+
     methods: {
-      async deleteBoat(id) {
-      if (window.confirm("Jeste li sigurni da želite izbrisati plovilo?")) {
-        try {
-          const response = await fetch(config.baseUrl+`/boats/${id}`, {
-            method: "DELETE",
-            credentials: "include"
-          });
-          if (!response.ok) {
-            throw new Error('Error deleting the boat');
-          }
-          this.boats = this.boats.filter(boat => boat._id !== id);
-        } catch (error) {
-          console.error('There was an error deleting the boat:', error);
-        }
-      }
+        async deleteBoat(id) {
+            if (window.confirm("Jeste li sigurni da želite izbrisati plovilo?")) {
+                try {
+                    const response = await fetch(config.baseUrl + `/boats/${id}`, {
+                        method: "DELETE",
+                        credentials: "include"
+                    });
+                    if (!response.ok) {
+                        throw new Error('Error deleting the boat');
+                    }
+                    this.boats = this.boats.filter(boat => boat._id !== id);
+                } catch (error) {
+                    console.error('There was an error deleting the boat:', error);
+                }
+            }
         },
-        
+
         editBoat(id) {
-        this.$router.push(`/edit-boat/${id}`);
+            this.$router.push(`/edit-boat/${id}`);
         },
 
         getBoatImageUrl(boatId, imageIndex) {
-  // Instead of constructing the URL, just access the URL from the boat's data
-  return this.boats.find(boat => boat._id === boatId).slikePlovila[imageIndex];
-}
+            return this.boats.find(boat => boat._id === boatId).slikePlovila[imageIndex];
+        }
     },
+
     async mounted() {
         try {
             const response = await fetch(config.baseUrl + '/boats/me', {
@@ -87,50 +84,54 @@ export default {
   
 
 <style scoped>
-
+.heading{
+  align-content: center;
+}
 .layout-container {
-    display: flex;
-    align-items: center; 
-    padding-top: 60px;
-    justify-content: center;
-  }
-
-  .boat-cards-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    
-  }
-  .card {
-  margin: 30px;
-  min-width: 260px;
-  max-width: 350px;
+  display: flex;
+  padding-top: 60px;
+  justify-content: center;
 }
 
-  .image-container {
-    width: 100%;
-    height: 200px;
-    background-color: #f3f3f3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-  }
+.boat-cards-container {
+  margin-left: 2.5%;
+  display: flex;
+  flex-wrap: wrap;
+  flex: 0 0 auto;
+  width: 95%;
+  gap: 20px;
+  justify-content: center;
+  align-content: center;
+}
 
-  .boat-card-link {
-    text-decoration: none;
-    color: black;
-  }
+.boat-cards-container .col-md-2 {
+  flex: 0 0 auto;
+  width: 360px;
+}
 
-  .boat-name,
-  .card-text > strong {
-    font-weight: bold;
-  }
+.image-container {
+  width: 100%;
+  height: 200px;
+  background-color: #f3f3f3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
 
-  .card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+.boat-card-link {
+  text-decoration: none;
+  color: black;
+}
+
+.boat-name,
+.card-text > strong {
+  font-weight: bold;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 </style>

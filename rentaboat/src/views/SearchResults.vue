@@ -6,6 +6,7 @@
         <div class="card-body">
           <h5 class="card-title">Filtriraj Plovila</h5>
           <input class="form-control" v-model="ime" placeholder="Ime plovila...">
+          <hr>
           <select class="form-control" v-model="tip">
             <option value="">Svi tipovi</option>
             <option value="Gliser">Gliser</option>
@@ -14,16 +15,24 @@
             <option value="Katamaran">Katamaran</option>
             <option value="Luksuzna Jahta">Luksuzna Jahta</option>
           </select>
+          <hr>
           <select class="form-control" v-model="lokacijaPlovila">
             <option value="">Sve Lokacije</option>
             <option v-for="location in uniqueLocations" :key="location">{{ location }}</option>
           </select>
+          <hr>
+          <label>Cijena plovila:</label>
+          <input type="range" class="form-control-range" v-model.number="cijenaMax" :max="maxCijenaPlovila" step="1">
+          <p>{{ cijenaMax }},00€</p>
+          <hr>
           <label>Snaga motora:</label>
           <input type="range" class="form-control-range" v-model.number="snagaMotoraMax" :max="maxMotorPower" step="1">
           <p>{{ snagaMotoraMax }} HP</p>
+          <hr>
           <label>Duljina plovila:</label>
           <input type="range" class="form-control-range" v-model.number="duljinaPlovilaMax" :max="maxBoatLength" step="0.1">
           <p>{{ duljinaPlovilaMax }} m</p>
+          <hr>
           <button class="btn btn-primary" @click="getAllBoats">Filtriraj</button>
         </div>
       </div>
@@ -70,10 +79,12 @@ export default {
       tip: '',
       lokacijaPlovila: '',
       uniqueLocations: [],
-      snagaMotoraMax: 600,
+      cijenaMax: 5000,
+      snagaMotoraMax: 3000,
       duljinaPlovilaMax: 50,
-      maxMotorPower: 600,
-      maxBoatLength: 50,
+      maxCijenaPlovila: null,
+      maxMotorPower: null,
+      maxBoatLength: null,
       userId: null,
     }
   },
@@ -87,6 +98,7 @@ export default {
   }
     await this.getAllBoats();
     await this.fetchUniqueLocations();
+    await this.fetchMaxPrice();
     await this.fetchMaxMotorPower();
     await this.fetchMaxBoatLength();
   },
@@ -98,6 +110,7 @@ export default {
     if (this.ime) url.searchParams.append('ime', this.ime);
     if (this.tip) url.searchParams.append('tip', this.tip);
     if (this.lokacijaPlovila) url.searchParams.append('lokacijaPlovila', this.lokacijaPlovila);
+    if (this.cijenaMax) url.searchParams.append('cijenaMax', this.cijenaMax);
     if (this.snagaMotoraMax) url.searchParams.append('snagaMotoraMax', this.snagaMotoraMax);
     if (this.duljinaPlovilaMax) url.searchParams.append('duljinaPlovilaMax', this.duljinaPlovilaMax);
 
@@ -132,6 +145,15 @@ export default {
         console.error("Error fetching unique locations:", error);
       }
     },
+    async fetchMaxPrice() {
+      try {
+          const response = await fetch(config.baseUrl+"/search/max-price");
+          const result = await response.json();
+          this.maxCijenaPlovila = result.cijenaPlovila;
+      } catch (error) {
+          console.error("Error fetching max price:", error);
+      }
+    },
     async fetchMaxMotorPower() {
       try {
         const response = await fetch(config.baseUrl+"/search/max-motor-power");
@@ -164,12 +186,12 @@ export default {
 </script>
 
 <style scoped>
-  .layout-container {
+ .layout-container {
     display: flex;
     padding-top: 60px;
-  }
+}
 
-  #filter-bar {
+#filter-bar {
     position: fixed;
     left: 0;
     top: 60px;
@@ -182,9 +204,16 @@ export default {
     padding: 20px;
     border-right: 1px solid #ccc;
     overflow-y: auto;
-  }
+}
 
-  .boat-cards-container {
+.form-control,
+.form-control-range,
+button.btn {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.boat-cards-container {
     margin-left: 280px;
     display: flex;
     flex-wrap: wrap;
@@ -192,17 +221,24 @@ export default {
     width: 90%;
     min-width: 80%;
     gap: 20px;
-  }
-  .boat-cards-container .col-md-2 {
-  flex: 0 0 auto;
-  width: 360px;
-}
-.owner-label-placeholder{
-  height: 30px;
 }
 
+.boat-cards-container .col-md-2 {
+    flex: 0 0 auto;
+    width: 360px;
+}
 
-  .image-container {
+.owner-label-placeholder {
+    height: 30px;
+}
+
+hr {
+    border-top: 1px solid #04325f;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.image-container {
     width: 100%;
     height: 200px;
     background-color: #f3f3f3;
@@ -210,24 +246,25 @@ export default {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-  }
+}
 
-  .boat-card-link {
+.boat-card-link {
     text-decoration: none;
     color: black;
-  }
+}
 
-  .owner-card {
-  border: 4px solid gold;
+.owner-card {
+    border: 4px solid gold;
 }
 
 .owner-label {
-  color: gold;
-  font-weight: bold;
+    color: gold;
+    font-weight: bold;
 }
 
-  .boat-name,
-  .card-text > strong {
+.boat-name,
+.card-text > strong {
     font-weight: bold;
-  }
+}
+
 </style>
