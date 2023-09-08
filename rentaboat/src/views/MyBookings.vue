@@ -87,7 +87,7 @@
                               </div>
                           </div>
                           <div class="row">
-                              <div class="col-md-3"><strong>Ukupna cijena: </strong>{{ booking.totalCost }} €</div>
+                              <div class="col-md-3"><strong>Ukupna cijena: </strong>{{ booking.totalCost }},00€</div>
                               <div class="col-md-3"><strong>Kraj: </strong>{{ formatDate(booking.endDate) }}</div>
                           </div>
                       </div>
@@ -105,13 +105,15 @@
                           <div class="row">
                               <div class="col-md-3"><strong>Model: </strong>{{ booking.boat.ime }}</div>
                               <div class="col-md-3"><strong>Početak: </strong>{{ formatDate(booking.startDate) }}</div>
-                              <div class="col-md-3"><strong>Kontakt: </strong>{{ booking.ownerContact }}</div>
+                              <div class="col-md-3"><strong>Kontakt: </strong>{{ booking.boat.ownerContact }}</div>
                               <div class="col-md-3">
                                   <button class="btn btn-danger" v-if="booking.status === 'upcoming'" @click="cancelBooking(booking._id)">OTKAŽI REZERVACIJU</button>
+                                  <button class="btn btn-primary" v-if="booking.status === 'past' && !booking.isRated" @click="rateBoat(booking._id)">OCIJENI PLOVILO</button>
+                                  <span v-if="booking.status === 'past' && booking.isRated">Ocijenjeno!</span>
                               </div>
                           </div>
                           <div class="row">
-                              <div class="col-md-3"><strong>Ukupna cijena: </strong>{{ booking.totalCost }} €</div>
+                              <div class="col-md-3"><strong>Ukupna cijena: </strong>{{ booking.totalCost }},00€</div>
                               <div class="col-md-3"><strong>Kraj: </strong>{{ formatDate(booking.endDate) }}</div>
                           </div>
                       </div>

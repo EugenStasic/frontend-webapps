@@ -77,7 +77,7 @@
           >
         </div>
         <div class="dostupnost-container">
-          <button @click="toggleDropdown = !toggleDropdown" class="btn btn-info d">Dostupnost</button>
+          <button @click="toggleDropdown = !toggleDropdown" class="btn btn-info-available">Provjeri Dostupnost</button>
           <ul v-if="toggleDropdown" class="dropdown-list">
             <li><strong>Nedostupni datumi:</strong></li>
             <li v-for="(date, index) in filteredBoatDates" :key="'boat-' + index">
@@ -93,7 +93,7 @@
         <p class="error-message">{{ errorMessage }}</p>
       </div>
       <div v-if="bookingSuccess" class="card-footer success-message">
-        <p>Uspješno ste rezervirali plovilo!Uspješno ste rezervirali plovilo! Detalje možete pronaći na <router-link to="/my-bookings">My Bookings stranici</router-link>.</p>
+        <p>Uspješno ste rezervirali plovilo! Detalje možete pronaći na <router-link to="/my-bookings">My Bookings stranici</router-link>.</p>
       </div>
     </div>
   </div>
@@ -344,8 +344,8 @@ export default {
   .dostupnost-container {
     margin-top: 10px;
   }
-  .btn-info.d {
-    background-color: orange;
+  .btn-info-available {
+    background-color: rgb(254, 254, 254);
   }
   .boat-description {
   max-width: 650px;
